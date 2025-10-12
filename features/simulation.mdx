@@ -1,0 +1,282 @@
+---
+title: 'Simulation Engine'
+description: 'Real-time model execution and analysis capabilities'
+---
+
+## Overview
+
+Veydra's simulation engine provides powerful, real-time model execution capabilities built on modern web technologies. Run complex system dynamics models directly in your browser with instant feedback and interactive parameter adjustment.
+
+## Core Technology
+
+### Pyodide Integration
+
+Veydra uses **Pyodide** to run Python models directly in the browser:
+
+- **WebAssembly Performance**: Near-native execution speed
+- **Full Python Support**: Complete scientific Python stack
+- **Browser-Based**: No server dependencies for model execution
+- **Real-time Processing**: Instant parameter updates
+
+### Simulation Features
+
+<CardGroup cols={2}>
+  <Card title="Real-time Execution" icon="bolt">
+    Instant model runs with parameter changes
+  </Card>
+  <Card title="Multi-Stock Support" icon="chart-mixed">
+    Handle complex models with multiple stocks
+  </Card>
+  <Card title="Scenario Comparison" icon="chart-bar">
+    Baseline vs current scenario analysis
+  </Card>
+  <Card title="Data Export" icon="download">
+    Export results in multiple formats
+  </Card>
+</CardGroup>
+
+## Execution Workflow
+
+### Model Processing
+
+<Steps>
+  <Step title="Model Loading">
+    1. Load Python model code from project
+    2. Initialize Pyodide environment
+    3. Load model-specific configuration
+    4. Prepare simulation namespace
+  </Step>
+  <Step title="Parameter Setup">
+    1. Apply current parameter values
+    2. Configure simulation time range
+    3. Set baseline vs scenario mode
+    4. Initialize data structures
+  </Step>
+  <Step title="Execution">
+    1. Run Python model function
+    2. Capture stock and flow values
+    3. Process time series data
+    4. Generate visualization data
+  </Step>
+  <Step title="Visualization">
+    1. Update chart displays
+    2. Refresh stock-flow diagram
+    3. Update data tables
+    4. Enable export options
+  </Step>
+</Steps>
+
+## Parameter Management
+
+### Active Parameters
+
+Parameters marked as "Active" enable real-time simulation updates:
+
+```python
+# Example parameter configuration
+active_parameters = {
+    'growth_rate': {
+        'value': 0.05,
+        'min': 0.0,
+        'max': 0.2,
+        'step': 0.01
+    },
+    'capacity_limit': {
+        'value': 1000,
+        'min': 100,
+        'max': 5000,
+        'step': 100
+    }
+}
+```
+
+### Parameter Types
+
+<Accordion title="Numeric Parameters">
+  Support for integers, floats, and scientific notation with configurable ranges and step sizes
+</Accordion>
+
+<Accordion title="Boolean Parameters">
+  Toggle switches for on/off model features and conditional logic
+</Accordion>
+
+<Accordion title="String Parameters">
+  Text inputs for model configuration and scenario naming
+</Accordion>
+
+## Simulation Modes
+
+### Baseline Mode
+
+Run models with default parameters to establish baseline behavior:
+
+- **Default Values**: Uses original model parameters
+- **Reference Point**: Basis for scenario comparison
+- **Reproducible**: Consistent results for comparison
+- **Benchmarking**: Standard for model validation
+
+### Scenario Mode
+
+Test different parameter combinations to explore "what-if" scenarios:
+
+- **Interactive Parameters**: Real-time slider adjustments
+- **Multiple Scenarios**: Save and compare different configurations
+- **Sensitivity Analysis**: Understand parameter impact
+- **Optimization**: Find optimal parameter combinations
+
+### Comparison Mode
+
+Side-by-side analysis of baseline vs scenario results:
+
+<CardGroup cols={2}>
+  <Card title="Visual Comparison" icon="chart-line">
+    Overlay baseline and scenario charts
+  </Card>
+  <Card title="Difference Analysis" icon="calculator">
+    Calculate and display differences
+  </Card>
+  <Card title="Percentage Changes" icon="percent">
+    Show relative changes from baseline
+  </Card>
+  <Card title="Statistical Summary" icon="chart-bar">
+    Key metrics and summary statistics
+  </Card>
+</CardGroup>
+
+## Data Processing
+
+### Time Series Handling
+
+Veydra automatically processes simulation results into time series data:
+
+- **Automatic Indexing**: Time-based data organization
+- **Interpolation**: Smooth data visualization
+- **Aggregation**: Multiple time scale support
+- **Filtering**: Data cleaning and validation
+
+### Output Configuration
+
+Model outputs are configured via `outputs.json` files:
+
+```json
+{
+  "stocks": [
+    {
+      "name": "population",
+      "display_name": "Population",
+      "units": "individuals",
+      "color": "#2E8B57"
+    }
+  ],
+  "flows": [
+    {
+      "name": "birth_rate", 
+      "display_name": "Birth Rate",
+      "units": "births/year",
+      "color": "#4169E1"
+    }
+  ]
+}
+```
+
+## Performance Optimization
+
+### Caching Strategy
+
+- **Model Caching**: Store compiled models for faster execution
+- **Parameter Caching**: Remember recent parameter sets
+- **Result Caching**: Cache simulation outputs
+- **File Caching**: Local storage for model files
+
+### Memory Management
+
+- **Efficient Data Structures**: Optimized for large datasets
+- **Garbage Collection**: Automatic memory cleanup
+- **Incremental Updates**: Only process changed data
+- **Resource Monitoring**: Track memory usage
+
+<Warning>
+  Large models with many parameters may require longer initial load times but will run smoothly once cached
+</Warning>
+
+## Error Handling
+
+### Graceful Failures
+
+The simulation engine includes robust error handling:
+
+<Accordion title="Syntax Errors">
+  Python syntax errors in model code are caught and displayed with helpful debugging information
+</Accordion>
+
+<Accordion title="Runtime Errors">
+  Execution errors during simulation show specific error messages and line numbers
+</Accordion>
+
+<Accordion title="Data Errors">
+  Invalid parameter values or data format issues are automatically detected and reported
+</Accordion>
+
+<Accordion title="Recovery Mechanisms">
+  Automatic fallback to last known good state when errors occur
+</Accordion>
+
+## Advanced Features
+
+### Custom Model Functions
+
+Write sophisticated Python models with full library support:
+
+```python
+import numpy as np
+import pandas as pd
+
+def complex_model(params, time_range):
+    # Complex calculations with scientific libraries
+    data = np.array(time_range)
+    results = pd.DataFrame()
+    
+    # Your model logic here
+    
+    return results.to_dict('records')
+```
+
+### Multi-Stock Analysis
+
+Handle models with multiple interacting stocks:
+
+- **Cross-stock Dependencies**: Model interactions between stocks
+- **Synchronized Updates**: Consistent time-step processing
+- **Relationship Mapping**: Track dependencies and influences
+- **Aggregate Views**: Summary statistics across all stocks
+
+## Debugging Tools
+
+### Execution Monitoring
+
+- **Real-time Logs**: View Python execution output
+- **Performance Metrics**: Track execution time and memory
+- **Parameter Tracking**: Monitor parameter changes
+- **Error Reporting**: Detailed error messages and stack traces
+
+### Model Validation
+
+- **Syntax Checking**: Pre-execution code validation
+- **Parameter Validation**: Check ranges and types
+- **Output Verification**: Ensure proper data formats
+- **Consistency Checks**: Verify model logic
+
+<Tip>
+  Use the browser's developer console to see detailed execution logs and debug model issues
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Chart Components" icon="chart-line" href="/components/charts">
+    Learn about visualization options
+  </Card>
+  <Card title="Model Controls" icon="sliders" href="/components/model-controls">
+    Master parameter management
+  </Card>
+</CardGroup>

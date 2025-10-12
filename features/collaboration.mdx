@@ -1,0 +1,272 @@
+---
+title: 'Collaboration Features'
+description: 'Team collaboration and sharing capabilities'
+---
+
+## Overview
+
+Veydra provides comprehensive collaboration tools that enable teams to work together effectively on system dynamics modeling projects. Share models, collaborate in real-time, and manage team permissions seamlessly.
+
+## Team Collaboration
+
+### Real-time Collaboration
+
+Work together on models with multiple team members simultaneously:
+
+<CardGroup cols={2}>
+  <Card title="Live Editing" icon="users">
+    Multiple users can edit models simultaneously
+  </Card>
+  <Card title="Change Tracking" icon="history">
+    See who made what changes and when
+  </Card>
+  <Card title="Conflict Resolution" icon="shield">
+    Automatic handling of simultaneous edits
+  </Card>
+  <Card title="Activity Feed" icon="bell">
+    Real-time notifications of team activities
+  </Card>
+</CardGroup>
+
+### Communication Tools
+
+#### Comments and Annotations
+
+Add context and feedback directly to your models:
+
+- **Model Comments**: Attach notes to specific model elements
+- **Parameter Comments**: Document parameter rationale and assumptions
+- **Result Annotations**: Mark interesting findings in simulation results
+- **Discussion Threads**: Threaded conversations on model components
+
+#### @Mentions and Notifications
+
+Stay connected with your team:
+
+- **@Mention Users**: Tag team members in comments
+- **Smart Notifications**: Get notified of relevant changes
+- **Email Digests**: Optional daily/weekly summary emails
+- **Mobile Alerts**: Push notifications for critical updates
+
+## Permission Management
+
+### Access Levels
+
+<Accordion title="Project Owner">
+  - Full control over project settings
+  - Add/remove team members
+  - Delete project
+  - Manage all models and data
+  - Configure integrations
+</Accordion>
+
+<Accordion title="Model Editor">
+  - Create and modify models
+  - Run simulations
+  - Manage scenarios
+  - Comment and collaborate
+  - Export data and results
+</Accordion>
+
+<Accordion title="Simulation Runner">
+  - Run existing models
+  - Adjust parameters
+  - View and export results
+  - Add comments
+  - Cannot modify model structure
+</Accordion>
+
+<Accordion title="Viewer">
+  - View models and results
+  - Read comments
+  - Export data (if allowed)
+  - Cannot make changes
+</Accordion>
+
+### Permission Settings
+
+Fine-grained control over what team members can do:
+
+- **Model Editing**: Control who can modify model structure
+- **Parameter Access**: Limit which parameters users can adjust
+- **Data Export**: Manage who can download simulation results
+- **Comment Permissions**: Control discussion participation
+- **Sharing Rights**: Manage who can invite new members
+
+<Warning>
+  Be careful with sensitive models - review permissions regularly and use principle of least privilege
+</Warning>
+
+## Sharing and Distribution
+
+### Project Sharing
+
+Multiple ways to share your work:
+
+<CardGroup cols={2}>
+  <Card title="Direct Invitations" icon="envelope">
+    Invite specific users by email address
+  </Card>
+  <Card title="Share Links" icon="link">
+    Generate secure links with customizable permissions
+  </Card>
+  <Card title="Organization Access" icon="building">
+    Share with entire organization
+  </Card>
+  <Card title="Public Projects" icon="globe">
+    Make projects publicly accessible
+  </Card>
+</CardGroup>
+
+### Link Sharing Options
+
+When generating share links, you can configure:
+
+- **Access Level**: Choose viewer, runner, or editor permissions
+- **Expiration**: Set automatic link expiry
+- **Password Protection**: Add extra security layer
+- **Single Use**: Links that expire after first use
+- **Domain Restrictions**: Limit access to specific domains
+
+### Embedding and Integration
+
+#### Embed Models
+
+Share interactive models on external websites:
+
+```html
+<!-- Example embed code -->
+<iframe 
+  src="https://veydra.io/embed/model/your-model-id"
+  width="800" 
+  height="600"
+  frameborder="0">
+</iframe>
+```
+
+#### API Integration
+
+Connect Veydra to external systems:
+
+- **REST API**: Programmatic access to models and results
+- **Webhooks**: Real-time notifications to external systems
+- **Data Sync**: Automatic data synchronization
+- **Custom Integrations**: Build custom workflows
+
+## Version Control and History
+
+### Git Integration
+
+Veydra uses Git for robust version control:
+
+- **Automatic Commits**: Changes are automatically saved
+- **Branch Management**: Create branches for experiments
+- **Merge Workflows**: Collaborate using standard Git workflows
+- **History Tracking**: Complete audit trail of changes
+
+### Change Management
+
+Track and review all modifications:
+
+<Accordion title="Change History">
+  View detailed logs of who changed what and when, with diff views of modifications
+</Accordion>
+
+<Accordion title="Rollback Capability">
+  Restore previous versions of models or revert specific changes
+</Accordion>
+
+<Accordion title="Branch Comparison">
+  Compare different model versions side-by-side
+</Accordion>
+
+<Accordion title="Merge Conflicts">
+  Guided resolution of simultaneous changes to the same model elements
+</Accordion>
+
+## Team Management
+
+### Organization Features
+
+For larger teams and organizations:
+
+- **Team Hierarchies**: Organize users into departments and roles
+- **Bulk User Management**: Add/remove users in bulk
+- **SSO Integration**: Single sign-on with enterprise systems
+- **Usage Analytics**: Track team engagement and usage patterns
+- **Billing Management**: Centralized subscription and billing
+
+### Onboarding Tools
+
+Help new team members get started quickly:
+
+- **Welcome Tutorials**: Guided tours of platform features
+- **Template Projects**: Pre-built examples for learning
+- **Documentation Library**: Searchable help and guides
+- **Training Resources**: Video tutorials and best practices
+
+## Best Practices
+
+### Effective Collaboration
+
+<Steps>
+  <Step title="Clear Roles">
+    Define who is responsible for model development, validation, and maintenance
+  </Step>
+  <Step title="Communication Guidelines">
+    Establish when to use comments vs external communication channels
+  </Step>
+  <Step title="Review Processes">
+    Set up approval workflows for significant model changes
+  </Step>
+  <Step title="Documentation Standards">
+    Maintain consistent documentation and commenting practices
+  </Step>
+</Steps>
+
+### Security and Privacy
+
+- **Regular Permission Audits**: Review who has access to what
+- **Data Classification**: Mark sensitive projects appropriately
+- **External Sharing Review**: Monitor public and external shares
+- **Access Logging**: Track who accesses what and when
+
+<Tip>
+  Start with a small, trusted team and gradually expand as your collaboration processes mature
+</Tip>
+
+## Integration Examples
+
+### Common Workflows
+
+#### Research Team Collaboration
+
+1. **Lead Researcher**: Creates project and base model
+2. **Team Members**: Each work on different model components
+3. **Review Process**: Regular team reviews using comments
+4. **Publication**: Export results for academic papers
+
+#### Business Planning
+
+1. **Analyst**: Builds financial forecasting model
+2. **Management**: Reviews scenarios using simulation runner role
+3. **Stakeholders**: View-only access to results dashboard
+4. **Decision Making**: Export data for executive presentations
+
+#### Consulting Projects
+
+1. **Consultant**: Develops client-specific models
+2. **Client Team**: Participates in scenario planning
+3. **Delivery**: Shared final results with controlled access
+4. **Handover**: Transfer ownership to client organization
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Project Management" icon="folder" href="/features/projects">
+    Learn more about organizing projects
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore programmatic integration options
+  </Card>
+</CardGroup>

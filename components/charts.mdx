@@ -1,0 +1,314 @@
+---
+title: 'Charts and Visualization'
+description: 'Interactive charts and data visualization components'
+---
+
+## Overview
+
+Veydra provides powerful visualization components built on Recharts to display simulation results. The chart system supports real-time updates, interactive features, and multiple display modes for comprehensive data analysis.
+
+## Chart Types
+
+### Single Stock Charts
+
+Display individual model components with focused analysis:
+
+<CardGroup cols={2}>
+  <Card title="Line Charts" icon="chart-line">
+    Time series data with baseline and scenario comparison
+  </Card>
+  <Card title="Area Charts" icon="chart-area">
+    Cumulative data visualization with filled areas
+  </Card>
+  <Card title="Bar Charts" icon="chart-simple">
+    Discrete time period comparisons
+  </Card>
+  <Card title="Scatter Plots" icon="chart-scatter">
+    Correlation and distribution analysis
+  </Card>
+</CardGroup>
+
+### Multi-Stock Charts
+
+Comprehensive view of all model stocks simultaneously:
+
+- **Synchronized Time Axis**: All stocks share the same time scale
+- **Individual Scaling**: Each stock maintains its own Y-axis scale
+- **Unified Legend**: Single legend for the first chart only
+- **Consistent Formatting**: Uniform styling across all charts
+
+## Chart Features
+
+### Interactive Elements
+
+<Accordion title="Hover Tooltips">
+  Rich tooltips showing exact values, time stamps, and formatted data with context-aware information
+</Accordion>
+
+<Accordion title="Zoom and Pan">
+  Interactive zoom controls for detailed time period analysis with smooth transitions
+</Accordion>
+
+<Accordion title="Legend Control">
+  Toggle data series visibility and access formatting options through interactive legends
+</Accordion>
+
+<Accordion title="Data Export">
+  Download chart data in CSV, JSON, or image formats directly from the interface
+</Accordion>
+
+### Real-time Updates
+
+Charts automatically update when simulation parameters change:
+
+- **Instant Rendering**: New data appears immediately
+- **Smooth Transitions**: Animated updates for better user experience
+- **Performance Optimization**: Efficient re-rendering of only changed data
+- **Memory Management**: Automatic cleanup of old data points
+
+## Chart Configuration
+
+### Data Formatting
+
+Charts automatically format data based on magnitude:
+
+```typescript
+// Number formatting examples
+const formatNumber = (value: number): string => {
+  const absValue = Math.abs(value);
+  if (absValue >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
+  if (absValue >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+  if (absValue >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
+  return value.toFixed(0);
+};
+```
+
+### Time Units
+
+Automatic time unit detection and labeling:
+
+- **Days**: Short-term simulations (< 100 days)
+- **Weeks**: Medium-term analysis (weeks to months)
+- **Months**: Seasonal and annual cycles
+- **Years**: Long-term trend analysis
+
+### Color Schemes
+
+Consistent color coding across all visualizations:
+
+- **Baseline Data**: Gray dashed lines (#6c757d)
+- **Scenario Data**: Blue solid lines (#0d6efd)
+- **Stock-specific Colors**: Unique colors for each stock
+- **Accessibility**: High contrast and colorblind-friendly palettes
+
+## Comparison Mode
+
+### Baseline vs Scenario
+
+Side-by-side comparison functionality:
+
+<Steps>
+  <Step title="Enable Comparison">
+    Toggle comparison mode in Model Controls
+  </Step>
+  <Step title="Baseline Establishment">
+    Run simulation with default parameters
+  </Step>
+  <Step title="Scenario Creation">
+    Adjust parameters to create alternative scenario
+  </Step>
+  <Step title="Visual Comparison">
+    View both datasets on same chart with different styling
+  </Step>
+</Steps>
+
+### Difference Analysis
+
+Calculate and display changes between scenarios:
+
+- **Absolute Differences**: Raw value changes over time
+- **Percentage Changes**: Relative changes from baseline
+- **Statistical Summary**: Mean, max, min differences
+- **Trend Analysis**: Direction and magnitude of changes
+
+## Chart Components
+
+### ChartArea Component
+
+Main single-stock visualization component:
+
+```typescript
+interface ChartAreaProps {
+  chartData: {
+    baseline: SeriesPoint[];
+    scenario: SeriesPoint[];
+  };
+  stockName: string;
+  timeUnit?: string;
+  compareMode: boolean;
+  onOpenTable?: () => void;
+}
+```
+
+### MultiStockChartArea Component
+
+Comprehensive multi-stock display:
+
+```typescript
+interface MultiStockChartAreaProps {
+  multiStockData: {
+    [stockName: string]: {
+      baseline: SeriesPoint[];
+      scenario: SeriesPoint[];
+    };
+  };
+  timeUnit?: string;
+  onOpenTable?: () => void;
+}
+```
+
+### Key Features
+
+<Accordion title="Responsive Design">
+  Charts automatically adapt to container size and device orientation
+</Accordion>
+
+<Accordion title="Performance Optimization">
+  Efficient rendering for large datasets with virtualization and data sampling
+</Accordion>
+
+<Accordion title="Accessibility">
+  Full keyboard navigation, screen reader support, and ARIA labels
+</Accordion>
+
+## Data Export
+
+### Export Formats
+
+Multiple export options for further analysis:
+
+<CardGroup cols={3}>
+  <Card title="CSV" icon="file-csv">
+    Spreadsheet-compatible data format
+  </Card>
+  <Card title="JSON" icon="file-code">
+    Structured data for programmatic access
+  </Card>
+  <Card title="PNG/SVG" icon="image">
+    High-quality chart images
+  </Card>
+</CardGroup>
+
+### Data Table Modal
+
+Interactive data table with:
+
+- **Sortable Columns**: Click headers to sort by any column
+- **Filtering**: Search and filter data by value ranges
+- **Pagination**: Efficient handling of large datasets
+- **Copy/Paste**: Easy data transfer to external tools
+
+## Customization Options
+
+### Styling
+
+Customize chart appearance:
+
+- **Theme Integration**: Matches application color scheme
+- **Custom Colors**: Override default color palettes
+- **Typography**: Configurable fonts and sizes
+- **Spacing**: Adjustable margins and padding
+
+### Layout Options
+
+- **Chart Size**: Configurable height and aspect ratio
+- **Margin Control**: Customize spacing around charts
+- **Grid Options**: Configure grid lines and styling
+- **Axis Configuration**: Custom axis labels and formatting
+
+## Performance Considerations
+
+### Large Datasets
+
+Optimizations for handling large simulation results:
+
+- **Data Sampling**: Intelligent point reduction for display
+- **Virtualization**: Only render visible portions
+- **Lazy Loading**: Progressive data loading
+- **Memory Management**: Efficient cleanup and garbage collection
+
+### Real-time Updates
+
+Smooth performance during parameter changes:
+
+- **Debounced Updates**: Prevent excessive re-rendering
+- **Incremental Changes**: Only update changed data series
+- **Animation Control**: Configurable transition speeds
+- **Resource Monitoring**: Track performance metrics
+
+<Tip>
+  For models with many stocks, consider using the single stock view for detailed analysis and multi-stock view for overview comparisons
+</Tip>
+
+## Integration Examples
+
+### Basic Chart Implementation
+
+```typescript
+import { ChartArea } from './components/charts/ChartArea';
+
+const MyModelResults = ({ simulationData }) => {
+  return (
+    <ChartArea
+      chartData={simulationData}
+      stockName="population"
+      timeUnit="years"
+      compareMode={true}
+      onOpenTable={() => setShowDataTable(true)}
+    />
+  );
+};
+```
+
+### Multi-Stock Dashboard
+
+```typescript
+import MultiStockChartArea from './components/MultiStockChartArea';
+
+const ModelDashboard = ({ allStocksData }) => {
+  return (
+    <MultiStockChartArea
+      multiStockData={allStocksData}
+      timeUnit="months"
+      onOpenTable={() => setShowTable(true)}
+    />
+  );
+};
+```
+
+## Best Practices
+
+### Chart Design
+
+1. **Clear Labels**: Use descriptive axis labels and titles
+2. **Consistent Scaling**: Maintain consistent scales for comparisons
+3. **Color Usage**: Use colors meaningfully and consistently
+4. **Data Density**: Avoid overcrowding charts with too much data
+
+### User Experience
+
+1. **Progressive Disclosure**: Show overview first, details on demand
+2. **Context Preservation**: Maintain user's view state during updates
+3. **Performance**: Optimize for smooth interactions
+4. **Accessibility**: Ensure charts work with assistive technologies
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Stock-Flow Diagrams" icon="diagram-project" href="/components/stock-flow-diagrams">
+    Learn about model structure visualization
+  </Card>
+  <Card title="Simulation Features" icon="play" href="/features/simulation">
+    Explore simulation engine capabilities
+  </Card>
+</CardGroup>

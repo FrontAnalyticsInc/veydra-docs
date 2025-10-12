@@ -1,52 +1,60 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quickstart Guide"
+description: "Get started with Veydra in minutes"
 ---
 
-## Get started in three steps
+## Welcome to Veydra!
 
-Get your documentation site running locally and make your first customization.
+This guide will help you get started with Veydra's system dynamics modeling platform. In just a few steps, you'll be creating and running your first model.
 
-### Step 1: Set up your local environment
+### Step 1: Access the Platform
+
+Navigate to your Veydra dashboard and sign in to your account.
+
+<Note>
+  If you don't have an account yet, contact your administrator or sign up for access.
+</Note>
+
+### Step 2: Create Your First Project
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+  <Accordion icon="plus" title="Create New Project">
+    Click "Create New Project" from your dashboard and give your project a descriptive name like "My First Model".
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+  <Accordion icon="gear" title="Choose Model Type">
+    Select the type of model you want to create:
+    - **Basic Model**: Simple stock-and-flow structure
+    - **Advanced Model**: Complex multi-stock systems  
+    - **Template**: Start from a pre-built model
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+### Step 3: Enter the Model Playground
 
 <AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Accordion icon="play" title="Launch Model Playground">
+    Once your project is created, you'll enter the **Model Playground** - the heart of Veydra where you build and test your models.
+  </Accordion>
+  <Accordion icon="sliders" title="Adjust Parameters">
+    Use the **Model Controls** panel to:
+    1. Set initial parameter values
+    2. Mark parameters as "Active" for real-time adjustment
+    3. Configure simulation settings
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
+    <Tip>Parameters marked as "Active" can be adjusted while running simulations.</Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Step 4: Run Your First Simulation
+
+<Accordion icon="rocket" title="Execute and Analyze">
+  1. Click the "Run" button to execute your model
+  2. Watch results appear in real-time in the chart area
+  3. Adjust parameters and run again to compare scenarios
+  4. Toggle "Compare Mode" to see baseline vs current scenario
+  
+  <Tip>Use the refresh button in Model Controls to reset all parameters to defaults while keeping them active.</Tip>
 </Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
   1. Commit and push your changes.
   2. Your docs will update and be live in moments!
 </Accordion>

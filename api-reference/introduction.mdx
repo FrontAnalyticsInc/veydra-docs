@@ -1,33 +1,52 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference'
+description: 'Comprehensive API documentation for Veydra platform'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to Veydra API
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The Veydra API provides comprehensive endpoints for financial modeling, portfolio management, and simulation analysis. Our RESTful API allows you to integrate Veydra's powerful analytics capabilities into your applications.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Veydra API Specification"
+  icon="chart-line"
+  href="http://api.veydra.io/v1"
 >
-  View the OpenAPI specification file
+  Base URL: http://api.veydra.io/v1
 </Card>
+
+## Key Features
+
+- **Project Management**: Create and manage financial modeling projects
+- **Model Operations**: Build and execute sophisticated financial models
+- **Simulation Engine**: Run Monte Carlo and scenario-based simulations
+- **User Management**: Handle authentication and user permissions
+- **Real-time Analytics**: Access live market data and analysis
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using Bearer tokens. Include your API token in the Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+## Rate Limiting
+
+The API implements rate limiting to ensure fair usage:
+- **Standard tier**: 1000 requests per hour
+- **Premium tier**: 5000 requests per hour
+- **Enterprise tier**: Unlimited requests
+
+## Response Format
+
+All API responses follow a consistent JSON format:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "status": "success",
+  "data": {...},
+  "message": "Operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
 ```

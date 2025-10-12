@@ -1,0 +1,138 @@
+---
+title: 'Project Management'
+description: 'Organize and manage your modeling projects'
+---
+
+## Overview
+
+Veydra's project management system helps you organize, share, and collaborate on your system dynamics models. Each project serves as a container for related models, data, and collaboration.
+
+## Creating Projects
+
+### New Project Workflow
+
+<Steps>
+  <Step title="Navigate to Dashboard">
+    From your main dashboard, click "Create New Project"
+  </Step>
+  <Step title="Project Configuration">
+    - **Project Name**: Choose a descriptive name
+    - **Description**: Add context about your project goals
+    - **Visibility**: Set public or private access
+    - **Template**: Optionally start from an existing template
+  </Step>
+  <Step title="Initial Setup">
+    Configure initial parameters and model structure
+  </Step>
+</Steps>
+
+## Project Features
+
+### 📁 **Project Organization**
+- Hierarchical project structure
+- Model versioning with Git integration
+- File and asset management
+- Project metadata and documentation
+
+### 👥 **Collaboration Tools**
+- Team member invitation and permissions
+- Real-time collaboration on models
+- Comment and annotation system
+- Change tracking and history
+
+### 🔧 **Model Management**
+- Multiple models per project
+- Branch and merge workflows
+- Model templates and examples
+- Import/export capabilities
+
+## Project Dashboard
+
+Your project dashboard provides an overview of:
+
+<CardGroup cols={2}>
+  <Card title="Recent Activity" icon="clock">
+    Latest model runs, changes, and team activity
+  </Card>
+  <Card title="Model Library" icon="books">
+    All models within the project
+  </Card>
+  <Card title="Team Members" icon="users">
+    Collaborators and their permissions
+  </Card>
+  <Card title="Settings" icon="gear">
+    Project configuration and preferences
+  </Card>
+</CardGroup>
+
+## Sharing and Permissions
+
+### Permission Levels
+
+<Accordion title="Owner">
+  Full control including deletion, member management, and all editing capabilities
+</Accordion>
+
+<Accordion title="Editor">
+  Can edit models, run simulations, and manage project content but cannot delete project or manage members
+</Accordion>
+
+<Accordion title="Viewer">
+  Read-only access to view models and results but cannot make changes
+</Accordion>
+
+### Sharing Options
+
+- **Direct Invitation**: Invite team members by email
+- **Link Sharing**: Generate shareable links with specific permissions
+- **Organization Access**: Share with your entire organization
+- **Public Projects**: Make projects publicly viewable
+
+<Warning>
+  Be careful with sensitive data when using public sharing options
+</Warning>
+
+## Best Practices
+
+### Project Organization
+
+1. **Descriptive Naming**: Use clear, consistent naming conventions
+2. **Documentation**: Maintain README files and model descriptions
+3. **Version Control**: Regular commits with meaningful messages
+4. **Asset Management**: Organize data files and documentation
+
+### Collaboration
+
+1. **Clear Permissions**: Set appropriate access levels for team members
+2. **Communication**: Use comments and annotations for feedback
+3. **Workflow**: Establish branching and merging protocols
+4. **Backup**: Regular exports of critical models
+
+<Tip>
+  Start with a small team and clear workflows before scaling to larger collaborations
+</Tip>
+
+## Project Templates
+
+Veydra offers several project templates to get you started:
+
+<CardGroup cols={2}>
+  <Card title="Business Model" icon="chart-mixed">
+    Financial forecasting and business planning
+  </Card>
+  <Card title="Environmental Model" icon="leaf">
+    Climate and ecosystem modeling
+  </Card>
+  <Card title="Population Dynamics" icon="users">
+    Demographic and population studies
+  </Card>
+  <Card title="Supply Chain" icon="truck">
+    Logistics and supply chain optimization
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Card title="Model Playground" icon="play" href="/features/model-playground">
+  Learn about building models in the interactive playground
+</Card>

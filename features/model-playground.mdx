@@ -1,0 +1,203 @@
+---
+title: 'Model Playground'
+description: 'Interactive environment for building and testing system dynamics models'
+---
+
+## Overview
+
+The Model Playground is Veydra's central workspace where you build, modify, and test your system dynamics models. It provides an interactive environment with real-time feedback and powerful visualization tools.
+
+## Key Components
+
+The Model Playground consists of several integrated panels that work together:
+
+<CardGroup cols={2}>
+  <Card title="Model Controls" icon="sliders">
+    Parameter adjustment and simulation controls
+  </Card>
+  <Card title="Stock-Flow Diagram" icon="diagram-project">
+    Visual representation of your model structure
+  </Card>
+  <Card title="Chart Area" icon="chart-line">
+    Real-time simulation results and comparisons
+  </Card>
+  <Card title="Code Editor" icon="code">
+    Direct Python code editing and customization
+  </Card>
+</CardGroup>
+
+## Model Controls Panel
+
+### Parameter Management
+
+The Model Controls panel is your command center for model interaction:
+
+- **Active Parameters**: Parameters available for real-time adjustment
+- **Parameter Sliders**: Interactive controls for each parameter
+- **Reset Functions**: Quickly return to default values
+- **Scenario Management**: Save and load different parameter sets
+
+### Control Features
+
+<Accordion title="Parameter Activation">
+  Mark parameters as "Active" to enable real-time slider controls during simulation
+</Accordion>
+
+<Accordion title="Reset All Parameters">
+  Use the refresh button to reset all parameters to defaults while keeping them active for quick experimentation
+</Accordion>
+
+<Accordion title="Scenario Comparison">
+  Enable "Compare Mode" to see baseline vs current scenario side-by-side
+</Accordion>
+
+## Stock-Flow Diagram Area
+
+### Visual Model Building
+
+The diagram area provides an interactive view of your model's structure:
+
+- **Stock Elements**: Rectangular boxes representing accumulations
+- **Flow Elements**: Arrows showing rates of change
+- **Connectors**: Links showing influence relationships
+- **Parameters**: Variable elements that can be adjusted
+
+### Interactive Features
+
+- **Drag and Drop**: Reposition elements for better layout
+- **Real-time Updates**: See value changes during simulation
+- **Zoom and Pan**: Navigate large, complex models
+- **Element Properties**: Click to edit element details
+
+<Note>
+  The diagram automatically updates to reflect changes made in the code editor
+</Note>
+
+## Chart Area
+
+### Visualization Options
+
+<CardGroup cols={2}>
+  <Card title="Single Stock View" icon="chart-line">
+    Focus on individual model components
+  </Card>
+  <Card title="Multi-Stock View" icon="chart-mixed">
+    Display all stocks simultaneously
+  </Card>
+  <Card title="Comparison Mode" icon="chart-bar">
+    Baseline vs scenario analysis
+  </Card>
+  <Card title="Data Export" icon="download">
+    Export simulation results
+  </Card>
+</CardGroup>
+
+### Chart Features
+
+- **Interactive Legends**: Show/hide data series
+- **Zoom and Pan**: Explore different time ranges
+- **Tooltips**: Detailed value information on hover
+- **Time Units**: Automatic scaling (days, weeks, months, years)
+
+## Code Editor
+
+### Python-Based Models
+
+Veydra uses Python for model execution, giving you full flexibility:
+
+```python
+# Example model structure
+def model_function(parameters):
+    # Define stocks and flows
+    population = parameters['initial_population']
+    growth_rate = parameters['growth_rate']
+    
+    # Calculate changes
+    new_population = population * (1 + growth_rate)
+    
+    return {
+        'population': new_population,
+        'growth': new_population - population
+    }
+```
+
+### Editor Features
+
+- **Syntax Highlighting**: Python code formatting
+- **Auto-completion**: Intelligent code suggestions
+- **Error Detection**: Real-time syntax checking
+- **Version Control**: Git integration for change tracking
+
+## Simulation Engine
+
+### Real-Time Execution
+
+The simulation engine processes your models using:
+
+- **Pyodide Integration**: Python execution in the browser
+- **WebAssembly**: High-performance computation
+- **Incremental Updates**: Fast parameter changes
+- **Memory Management**: Efficient data handling
+
+### Performance Features
+
+- **Caching**: Smart caching of model files and configurations
+- **Parallel Processing**: Multiple scenario execution
+- **Optimization**: Automatic performance tuning
+- **Error Handling**: Graceful failure recovery
+
+## Workflow Example
+
+<Steps>
+  <Step title="Model Setup">
+    1. Load or create a new model
+    2. Review the stock-flow diagram
+    3. Identify key parameters to activate
+  </Step>
+  <Step title="Parameter Configuration">
+    1. Mark important parameters as "Active"
+    2. Set initial values using sliders
+    3. Configure simulation time range
+  </Step>
+  <Step title="Simulation">
+    1. Run initial baseline simulation
+    2. Adjust parameters in real-time
+    3. Compare different scenarios
+  </Step>
+  <Step title="Analysis">
+    1. Review chart results
+    2. Export data for further analysis
+    3. Save interesting scenarios
+  </Step>
+</Steps>
+
+## Advanced Features
+
+### Git Integration
+
+- **Version Control**: Track all model changes
+- **Branching**: Experiment with different approaches
+- **Merging**: Collaborate on model development
+- **History**: Review past versions and changes
+
+### Collaboration Tools
+
+- **Real-time Sharing**: Multiple users in same playground
+- **Comments**: Annotate models and results
+- **Permissions**: Control who can edit vs view
+- **Change Notifications**: Track team member activities
+
+<Tip>
+  Use the Model Playground's reset functionality to quickly experiment with different parameter combinations while maintaining your baseline for comparison
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Simulation Features" icon="play" href="/features/simulation">
+    Learn about advanced simulation capabilities
+  </Card>
+  <Card title="Model Controls Guide" icon="sliders" href="/components/model-controls">
+    Detailed guide to parameter management
+  </Card>
+</CardGroup>

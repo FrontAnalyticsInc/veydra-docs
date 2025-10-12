@@ -1,0 +1,380 @@
+---
+title: 'Stock and Flow Diagrams'
+description: 'Visual representation of system dynamics model structure'
+---
+
+## Overview
+
+Stock and Flow diagrams are the visual foundation of system dynamics modeling in Veydra. These interactive diagrams provide an intuitive way to understand, build, and modify the structure of your models by representing the accumulations (stocks) and rates of change (flows) in your system.
+
+## Core Concepts
+
+### Stocks (Accumulations)
+
+Stocks represent things that can be measured at a point in time:
+
+<CardGroup cols={2}>
+  <Card title="Population" icon="users">
+    Number of people in a system at any given time
+  </Card>
+  <Card title="Inventory" icon="boxes-stacked">
+    Amount of goods or materials stored
+  </Card>
+  <Card title="Money" icon="dollar-sign">
+    Financial balances and account values
+  </Card>
+  <Card title="Knowledge" icon="brain">
+    Accumulated information or skills
+  </Card>
+</CardGroup>
+
+### Flows (Rates)
+
+Flows represent activities that occur over time and change stock levels:
+
+- **Inflows**: Activities that increase a stock (births, production, income)
+- **Outflows**: Activities that decrease a stock (deaths, consumption, expenses)
+- **Bi-directional**: Flows that can go either direction based on conditions
+
+### Connectors
+
+Links that show influence relationships between elements:
+
+- **Information Links**: Show what factors influence flows
+- **Causal Relationships**: Indicate cause-and-effect connections
+- **Feedback Loops**: Circular relationships that create system behavior
+
+## Visual Elements
+
+### Stock Representation
+
+Stocks are displayed as rectangular boxes with:
+
+```
+┌─────────────────┐
+│   POPULATION    │
+│     1,000       │
+└─────────────────┘
+```
+
+- **Name**: Clear identifier for the stock
+- **Current Value**: Real-time value during simulation
+- **Units**: Measurement units (people, dollars, etc.)
+- **Color Coding**: Visual indication of status or category
+
+### Flow Representation
+
+Flows are shown as arrows with:
+
+```
+    Birth Rate
+  ────────────►
+   +50 /year
+```
+
+- **Direction**: Arrow indicates flow direction
+- **Rate Value**: Current flow rate during simulation
+- **Rate Name**: Descriptive name for the flow
+- **Units**: Rate units (per day, per year, etc.)
+
+### Connector Types
+
+<Accordion title="Information Links">
+  Thin arrows showing what information influences a flow rate (e.g., population size affecting birth rate)
+</Accordion>
+
+<Accordion title="Material Flows">
+  Thick arrows representing actual movement of materials, people, or resources
+</Accordion>
+
+<Accordion title="Feedback Loops">
+  Curved connections showing how outputs influence inputs in the system
+</Accordion>
+
+## Interactive Features
+
+### Real-time Updates
+
+During simulation, the diagram shows live data:
+
+- **Stock Values**: Numbers update in real-time
+- **Flow Rates**: Current rates display on arrows
+- **Color Changes**: Visual indicators of increase/decrease
+- **Animation**: Optional flow animation to show activity
+
+### Drag and Drop
+
+Build and modify models visually:
+
+<Steps>
+  <Step title="Add Elements">
+    Drag stocks and flows from palette onto canvas
+  </Step>
+  <Step title="Connect Elements">
+    Draw connections between stocks and flows
+  </Step>
+  <Step title="Position Layout">
+    Arrange elements for optimal readability
+  </Step>
+  <Step title="Configure Properties">
+    Set names, initial values, and parameters
+  </Step>
+</Steps>
+
+### Element Properties
+
+Click any element to configure:
+
+- **Basic Properties**: Name, initial value, units
+- **Visual Properties**: Color, size, label position
+- **Behavior**: Calculation formulas and logic
+- **Documentation**: Notes and descriptions
+
+## Diagram Types
+
+### Simple Linear Flow
+
+Basic accumulation with inflow and outflow:
+
+```
+[Source] ──► [Stock] ──► [Sink]
+           Inflow    Outflow
+```
+
+Example: Water tank with input and output valves
+
+### Aging Chain
+
+Multiple connected stocks representing progression:
+
+```
+[Young] ──► [Adult] ──► [Elderly]
+       Aging      Aging
+```
+
+Example: Population age groups or product lifecycle stages
+
+### Circular Flow
+
+Closed loop with materials/people cycling:
+
+```
+[Active] ◄──► [Inactive]
+   ▲              │
+   └──────────────┘
+```
+
+Example: Employment/unemployment or active/dormant customers
+
+### Network Structure
+
+Complex interconnected stocks and flows:
+
+```
+[Stock A] ──► [Stock B]
+    │             ▲
+    ▼             │
+[Stock C] ──► [Stock D]
+```
+
+Example: Supply chain networks or ecosystem models
+
+## Building Diagrams
+
+### Design Process
+
+<Steps>
+  <Step title="Identify Stocks">
+    What are the key accumulations in your system?
+  </Step>
+  <Step title="Identify Flows">
+    What activities change these accumulations?
+  </Step>
+  <Step title="Find Influences">
+    What factors affect the flow rates?
+  </Step>
+  <Step title="Create Connections">
+    Draw the causal relationships
+  </Step>
+  <Step title="Test Structure">
+    Run simulation to verify behavior
+  </Step>
+</Steps>
+
+### Best Practices
+
+#### Clear Layout
+
+1. **Left to Right**: Arrange flows from left to right when possible
+2. **Avoid Crossings**: Minimize crossing lines for clarity
+3. **Group Related**: Keep related elements close together
+4. **Use Space**: Don't crowd elements together
+
+#### Naming Conventions
+
+1. **Noun Phrases**: Stocks should be named with nouns (Population, Inventory)
+2. **Rate Phrases**: Flows should describe rates (Birth Rate, Sales Rate)
+3. **Descriptive**: Use clear, meaningful names
+4. **Consistent**: Maintain naming patterns across models
+
+#### Documentation
+
+1. **Element Notes**: Add descriptions to complex elements
+2. **Assumptions**: Document key assumptions and logic
+3. **Units**: Clearly specify units for all quantities
+4. **Sources**: Reference data sources and research
+
+## Advanced Features
+
+### Conditional Flows
+
+Flows that change behavior based on conditions:
+
+```python
+# Example: Population growth with carrying capacity
+if population < carrying_capacity:
+    birth_rate = base_birth_rate
+else:
+    birth_rate = base_birth_rate * (carrying_capacity / population)
+```
+
+### Non-linear Relationships
+
+Complex mathematical relationships:
+
+- **Exponential Growth**: Accelerating change over time
+- **S-Curves**: Growth that levels off at limits
+- **Oscillations**: Cyclical behavior patterns
+- **Threshold Effects**: Sudden changes at specific points
+
+### Table Functions
+
+Lookup tables for empirical relationships:
+
+```python
+# Example: Effect of temperature on reaction rate
+temperature_effect = table_lookup(temperature, [
+    (0, 0.1),    # 0°C: 10% normal rate
+    (25, 1.0),   # 25°C: 100% normal rate
+    (50, 3.0),   # 50°C: 300% normal rate
+    (75, 0.5)    # 75°C: 50% normal rate (degradation)
+])
+```
+
+## Integration with Code
+
+### Model Generation
+
+Diagrams automatically generate Python code structure:
+
+```python
+# Generated model structure
+class SystemModel:
+    def __init__(self):
+        self.stocks = {
+            'population': 1000,
+            'resources': 500
+        }
+        
+    def calculate_flows(self, dt):
+        birth_rate = self.stocks['population'] * 0.05
+        resource_consumption = self.stocks['population'] * 0.1
+        
+        return {
+            'births': birth_rate,
+            'consumption': resource_consumption
+        }
+```
+
+### Bi-directional Sync
+
+Changes in either direction are synchronized:
+
+- **Diagram → Code**: Visual changes update Python model
+- **Code → Diagram**: Code edits refresh visual layout
+- **Real-time**: Changes appear immediately in both views
+- **Conflict Resolution**: Smart merging of simultaneous changes
+
+## Collaboration Features
+
+### Shared Editing
+
+Multiple users can edit diagrams simultaneously:
+
+- **Real-time Updates**: See changes from other users instantly
+- **Conflict Prevention**: Locking system prevents editing conflicts
+- **Change Tracking**: Visual indicators show who made what changes
+- **Comment System**: Attach notes and feedback to diagram elements
+
+### Version Control
+
+Full version history for diagram changes:
+
+- **Git Integration**: Diagrams are versioned with model code
+- **Visual Diffs**: See changes between diagram versions
+- **Branching**: Create experimental diagram variations
+- **Merge Tools**: Combine changes from different contributors
+
+## Validation and Testing
+
+### Structure Validation
+
+Automatic checks for diagram integrity:
+
+<Accordion title="Conservation Laws">
+  Verify that flows properly connect to stocks and conserve quantities
+</Accordion>
+
+<Accordion title="Unit Consistency">
+  Check that connected elements have compatible units
+</Accordion>
+
+<Accordion title="Completeness">
+  Ensure all stocks have appropriate inflows and outflows
+</Accordion>
+
+<Accordion title="Reachability">
+  Verify that all elements can be influenced by model parameters
+</Accordion>
+
+### Behavior Testing
+
+Validate model behavior through simulation:
+
+- **Extreme Conditions**: Test with unusual parameter values
+- **Equilibrium**: Verify steady-state behavior
+- **Sensitivity**: Check response to parameter changes
+- **Reality Check**: Compare results to real-world expectations
+
+## Accessibility and Usability
+
+### Keyboard Navigation
+
+Full keyboard support for diagram interaction:
+
+- **Tab Navigation**: Move between elements with tab key
+- **Arrow Keys**: Navigate spatial relationships
+- **Shortcuts**: Quick access to common operations
+- **Screen Readers**: Full compatibility with assistive technology
+
+### Visual Accessibility
+
+- **High Contrast**: Clear distinction between elements
+- **Color Independence**: Information not conveyed by color alone
+- **Scalable Text**: Respect system font size preferences
+- **Motion Options**: Respect reduced motion preferences
+
+<Tip>
+  Start with simple stock and flow structures, then gradually add complexity as your understanding of the system develops
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Model Playground" icon="play" href="/features/model-playground">
+    Learn to use diagrams in the modeling environment
+  </Card>
+  <Card title="Model Controls" icon="sliders" href="/components/model-controls">
+    Connect diagram elements to interactive controls
+  </Card>
+</CardGroup>

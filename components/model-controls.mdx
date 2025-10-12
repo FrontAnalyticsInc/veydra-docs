@@ -1,0 +1,317 @@
+---
+title: 'Model Controls'
+description: 'Interactive parameter management and simulation controls'
+---
+
+## Overview
+
+The Model Controls component is your primary interface for managing model parameters, running simulations, and controlling the modeling workflow. It provides an intuitive way to interact with your system dynamics models in real-time.
+
+## Component Layout
+
+The Model Controls panel is organized into several key sections:
+
+<CardGroup cols={2}>
+  <Card title="Active Parameters" icon="sliders">
+    Real-time parameter controls and adjustments
+  </Card>
+  <Card title="Simulation Controls" icon="play">
+    Run, pause, and reset simulation functions
+  </Card>
+  <Card title="Scenario Management" icon="bookmark">
+    Save, load, and manage different parameter sets
+  </Card>
+  <Card title="Model Settings" icon="gear">
+    Configuration options and model preferences
+  </Card>
+</CardGroup>
+
+## Active Parameters Section
+
+### Parameter Activation
+
+Parameters must be marked as "Active" to appear in the controls panel:
+
+```typescript
+// Example parameter configuration
+interface Parameter {
+  id: string;
+  name: string;
+  value: number | boolean | string;
+  min?: number;
+  max?: number;
+  step?: number;
+  type: 'number' | 'boolean' | 'string';
+  active: boolean;
+}
+```
+
+### Parameter Controls
+
+#### Numeric Parameters
+
+<Accordion title="Slider Controls">
+  Interactive sliders for real-time parameter adjustment with configurable min/max values and step sizes
+</Accordion>
+
+<Accordion title="Direct Input">
+  Text input fields for precise parameter values with validation
+</Accordion>
+
+<Accordion title="Range Display">
+  Visual indicators showing current value within allowable range
+</Accordion>
+
+#### Boolean Parameters
+
+Toggle switches for on/off parameters:
+
+- **Visual Toggle**: Clear on/off state indication
+- **Instant Feedback**: Immediate simulation updates
+- **Grouped Controls**: Related boolean parameters grouped together
+
+#### String Parameters
+
+Text input fields for configuration values:
+
+- **Validation**: Real-time input validation
+- **Autocomplete**: Suggestions for common values
+- **History**: Recently used values
+
+### Parameter Header Actions
+
+The "Active Parameters" section header includes control buttons:
+
+<CardGroup cols={3}>
+  <Card title="Refresh All" icon="refresh">
+    Reset all parameters to defaults while keeping them active
+  </Card>
+  <Card title="Clear Active" icon="x">
+    Remove all parameters from active list
+  </Card>
+  <Card title="Expand/Collapse" icon="chevron-down">
+    Show/hide the parameters section
+  </Card>
+</CardGroup>
+
+## Simulation Controls
+
+### Primary Actions
+
+<Steps>
+  <Step title="Run Simulation">
+    Execute the model with current parameter values
+    
+    - **Instant Execution**: Results appear in real-time
+    - **Progress Indicators**: Visual feedback during execution
+    - **Error Handling**: Clear error messages if execution fails
+  </Step>
+  <Step title="Reset Parameters">
+    Return all parameters to their default values
+    
+    - **Confirmation Dialog**: Prevent accidental resets
+    - **Selective Reset**: Option to reset individual parameters
+    - **Undo Capability**: Restore previous parameter state
+  </Step>
+  <Step title="Compare Mode">
+    Toggle between baseline and scenario comparison
+    
+    - **Side-by-side Charts**: Visual comparison of results
+    - **Difference Calculations**: Quantify changes from baseline
+    - **Export Options**: Download comparison data
+  </Step>
+</Steps>
+
+### Advanced Controls
+
+<Accordion title="Simulation Speed">
+  Adjust the speed of animated simulations for better visualization
+</Accordion>
+
+<Accordion title="Time Range">
+  Configure simulation start/end times and step size
+</Accordion>
+
+<Accordion title="Output Format">
+  Choose between different data export formats
+</Accordion>
+
+## Scenario Management
+
+### Saving Scenarios
+
+Preserve interesting parameter combinations for future use:
+
+```typescript
+interface Scenario {
+  id: string;
+  name: string;
+  description?: string;
+  parameters: Record<string, any>;
+  timestamp: Date;
+  author: string;
+}
+```
+
+### Scenario Features
+
+<CardGroup cols={2}>
+  <Card title="Quick Save" icon="floppy-disk">
+    Save current parameters with auto-generated name
+  </Card>
+  <Card title="Named Scenarios" icon="bookmark">
+    Save with custom names and descriptions
+  </Card>
+  <Card title="Load Previous" icon="folder-open">
+    Restore previously saved parameter sets
+  </Card>
+  <Card title="Share Scenarios" icon="share">
+    Export scenarios for team collaboration
+  </Card>
+</CardGroup>
+
+### Scenario Management UI
+
+- **Scenario List**: Dropdown or modal with all saved scenarios
+- **Preview**: Show parameter values before loading
+- **Metadata**: Display save date, author, and description
+- **Organization**: Group scenarios by project or category
+
+## Parameter State Management
+
+### State Persistence
+
+The Model Controls component maintains parameter state across sessions:
+
+- **Browser Storage**: Local storage for parameter values
+- **Cloud Sync**: Optional synchronization across devices
+- **Version Control**: Integration with Git for parameter history
+- **Backup**: Automatic backup of parameter configurations
+
+### State Updates
+
+Real-time synchronization with model execution:
+
+<Accordion title="Immediate Updates">
+  Parameter changes trigger immediate model updates when in real-time mode
+</Accordion>
+
+<Accordion title="Batch Updates">
+  Option to accumulate changes and apply them together
+</Accordion>
+
+<Accordion title="Validation">
+  Parameter values are validated before being applied to the model
+</Accordion>
+
+## Responsive Design
+
+### Layout Adaptation
+
+The Model Controls component adapts to different screen sizes:
+
+- **Desktop**: Full sidebar layout with all controls visible
+- **Tablet**: Collapsible sections with touch-friendly controls
+- **Mobile**: Modal-based interface with simplified controls
+
+### Touch Interactions
+
+Optimized for touch devices:
+
+- **Larger Touch Targets**: Bigger buttons and sliders
+- **Gesture Support**: Swipe gestures for navigation
+- **Haptic Feedback**: Vibration feedback on compatible devices
+
+## Integration Features
+
+### Event System
+
+The component communicates with other parts of the application:
+
+```typescript
+// Example event handlers
+interface ModelControlsProps {
+  onParameterChange: (id: string, value: any) => void;
+  onRunSimulation: () => void;
+  onReset: () => void;
+  onResetActiveToDefaults: () => void;
+  onSaveScenario: (scenario: Scenario) => void;
+  onLoadScenario: (scenarioId: string) => void;
+}
+```
+
+### Data Binding
+
+Two-way data binding with the model execution engine:
+
+- **Parameter Updates**: Changes flow to simulation engine
+- **Result Feedback**: Simulation results update UI state
+- **Error Propagation**: Execution errors displayed in controls
+- **Performance Metrics**: Execution time and performance data
+
+## Accessibility Features
+
+### Keyboard Navigation
+
+Full keyboard accessibility for all controls:
+
+- **Tab Navigation**: Logical tab order through all controls
+- **Keyboard Shortcuts**: Quick access to common functions
+- **Focus Indicators**: Clear visual focus states
+- **Screen Reader Support**: Proper ARIA labels and descriptions
+
+### Visual Accessibility
+
+- **High Contrast**: Support for high contrast modes
+- **Font Scaling**: Respect system font size preferences
+- **Color Independence**: Information not conveyed by color alone
+- **Motion Reduction**: Respect reduced motion preferences
+
+## Customization Options
+
+### Theming
+
+Customize the appearance to match your brand:
+
+- **Color Schemes**: Custom color palettes
+- **Typography**: Font family and sizing options
+- **Spacing**: Adjust padding and margins
+- **Animations**: Configure transition effects
+
+### Layout Options
+
+- **Panel Position**: Left, right, or floating panels
+- **Size Configuration**: Fixed width or responsive sizing
+- **Section Organization**: Customize which sections are shown
+- **Default States**: Configure default expanded/collapsed states
+
+<Tip>
+  Use the refresh button in the Active Parameters header to quickly reset all parameters while keeping them active - perfect for rapid experimentation
+</Tip>
+
+## Best Practices
+
+### Parameter Organization
+
+1. **Logical Grouping**: Group related parameters together
+2. **Clear Naming**: Use descriptive parameter names
+3. **Appropriate Ranges**: Set meaningful min/max values
+4. **Default Values**: Choose sensible defaults for new users
+
+### User Experience
+
+1. **Progressive Disclosure**: Show basic controls first, advanced options on demand
+2. **Immediate Feedback**: Provide instant visual feedback for all actions
+3. **Error Prevention**: Validate inputs and prevent invalid states
+4. **Help Text**: Include tooltips and help text for complex parameters
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Chart Components" icon="chart-line" href="/components/charts">
+    Learn about visualization components
+  </Card>
+  <Card title="Stock-Flow Diagrams" icon="diagram-project" href="/components/stock-flow-diagrams">
+    Explore model structure visualization
+  </Card>
+</CardGroup>
