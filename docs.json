@@ -9,21 +9,48 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
-      "index",
-      "quickstart",
-      "features/projects",
-      "features/model-playground",
-      "features/simulation",
-      "features/collaboration",
-      "components/model-controls",
-      "components/charts",
-      "components/stock-flow-diagrams",
-      "api-reference/introduction",
-      "api-reference/endpoint/get",
-      "api-reference/endpoint/create",
-      "api-reference/endpoint/delete",
-      "api-reference/endpoint/webhook"
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["index", "quickstart"]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/projects",
+              "features/model-playground", 
+              "features/simulation",
+              "features/collaboration"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/model-controls",
+              "components/charts",
+              "components/stock-flow-diagrams"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create", 
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          }
+        ]
+      }
     ]
   },
   "logo": {
