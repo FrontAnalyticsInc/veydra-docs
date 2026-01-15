@@ -27,6 +27,12 @@
             ]
           },
           {
+            "group": "Tools",
+            "pages": [
+              "tools/behavior-analysis"
+            ]
+          },
+          {
             "group": "Components",
             "pages": [
               "components/model-controls",
