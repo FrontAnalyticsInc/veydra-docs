@@ -1,0 +1,235 @@
+---
+title: "MCP Integration Guide"
+description: "Connect Veydra to your AI assistant in under two minutes"
+icon: "plug"
+---
+
+# The Veydra Intelligence Layer
+
+Connecting Veydra to your AI takes less than two minutes. Once connected, your AI assistant can run system dynamics simulations, analyze causal loops, and provide decision support directly in your chat window.
+
+<Info>
+You'll need a Veydra API key for most integrations. Get yours at [veydra.io/settings/api-keys](https://veydra.io/settings/api-keys).
+</Info>
+
+---
+
+## Claude Desktop
+
+Claude is currently the most robust host for MCP. It uses a configuration file to manage connections.
+
+<Steps>
+  <Step title="Open Settings">
+    Click your profile name in the bottom-left corner of Claude Desktop and select **Settings**.
+  </Step>
+  <Step title="Developer Tab">
+    Navigate to the **Developer** tab in the sidebar.
+  </Step>
+  <Step title="Edit Config">
+    Click the **Edit Config** button. This will open your `claude_desktop_config.json` file.
+  </Step>
+  <Step title="Add Veydra">
+    Paste the following into the `mcpServers` object:
+
+    ```json
+    "veydra": {
+      "url": "https://api.veydra.io/mcp",
+      "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+    }
+    ```
+  </Step>
+  <Step title="Restart">
+    Fully quit and restart Claude. You will see a 🧩 icon in the chat bar indicating Veydra is active.
+  </Step>
+</Steps>
+
+---
+
+## Cursor & VS Code
+
+Cursor provides a native GUI for adding MCP servers without touching JSON files.
+
+<Steps>
+  <Step title="Open Settings">
+    Press `Cmd + Shift + J` (Mac) or `Ctrl + Shift + J` (Windows) to open Cursor Settings.
+  </Step>
+  <Step title="Navigate to MCP">
+    Scroll down to the **MCP** section under General.
+  </Step>
+  <Step title="Add New Server">
+    Click the **+ Add New MCP Server** button.
+  </Step>
+  <Step title="Fill the Form">
+    Configure the server with these values:
+    
+    | Field | Value |
+    |-------|-------|
+    | **Name** | `Veydra` |
+    | **Type** | `sse` (or `HTTP`) |
+    | **URL** | `https://api.veydra.io/mcp` |
+  </Step>
+  <Step title="Save">
+    Click Save. Cursor will immediately "handshake" with Veydra and list available tools.
+  </Step>
+</Steps>
+
+---
+
+## ChatGPT (Enterprise & Plus)
+
+OpenAI supports MCP through "Connectors" (Developer Mode required).
+
+<Steps>
+  <Step title="Enable Developer Mode">
+    Go to **Settings → Connectors → Advanced** and toggle **Developer Mode** to **ON**.
+  </Step>
+  <Step title="Create Connector">
+    Go to **Settings → Connectors** and click the **Create** button.
+  </Step>
+  <Step title="Configure URL">
+    Fill in the connector details:
+    
+    | Field | Value |
+    |-------|-------|
+    | **Name** | `Veydra Simulation` |
+    | **Connector URL** | `https://api.veydra.io/mcp` |
+  </Step>
+  <Step title="Authentication">
+    Set authentication to `Bearer Token` and paste your Veydra API Key.
+  </Step>
+  <Step title="Verify">
+    ChatGPT will ping the endpoint and show you a list of tools like `list_models`, `run_simulation`, or `get_parameters`.
+  </Step>
+</Steps>
+
+---
+
+## Grok (xAI)
+
+Grok 3+ supports remote MCP tools via their "Plugin" architecture.
+
+<Steps>
+  <Step title="Plugin Settings">
+    In the Grok interface, click the **Plugins** icon (usually a ⚡ or 🔌 icon).
+  </Step>
+  <Step title="Custom Tool">
+    Select **Add Custom Remote Tool**.
+  </Step>
+  <Step title="Manifest URL">
+    Enter `https://api.veydra.io/.well-known/mcp.json`. Grok will automatically parse your server capabilities.
+  </Step>
+  <Step title="Authorize">
+    Confirm the permissions Grok requests to access the Veydra simulation engine.
+  </Step>
+</Steps>
+
+---
+
+## Gemini CLI
+
+Google's Gemini CLI supports MCP servers natively.
+
+```bash
+gemini mcp add veydra -- npx @veydra-io/mcp-server
+```
+
+Or configure with a URL:
+
+```json
+{
+  "mcpServers": {
+    "veydra": {
+      "url": "https://api.veydra.io/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Local-First Setup (For Researchers)
+
+If you're a data scientist working with sensitive local data, we recommend the stdio version. This ensures your data never leaves your infrastructure.
+
+<Warning>
+The local version requires Node.js 18+ installed on your system.
+</Warning>
+
+### Installation
+
+```bash
+npm install -g @veydra-io/mcp-server
+```
+
+### Usage with Claude Desktop
+
+Add to your `claude_desktop_config.json`:
+
+```json
+"veydra": {
+  "command": "npx",
+  "args": ["@veydra-io/mcp-server"],
+  "env": {
+    "VEYDRA_API_KEY": "your-api-key"
+  }
+}
+```
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `VEYDRA_API_KEY` | Your Veydra API key | Yes |
+| `VEYDRA_API_URL` | Custom API URL (default: `https://api.veydra.io`) | No |
+
+---
+
+## Available Tools
+
+Once connected, your AI assistant has access to these tools:
+
+| Tool | Description |
+|------|-------------|
+| `list_models` | List available simulation models |
+| `get_model` | Get model details and structure |
+| `get_parameters` | Get adjustable model parameters |
+| `run_simulation` | Execute simulation with parameters |
+| `ask_model` | Chat with AI about a model |
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection failed">
+    1. Verify your API key is valid at [veydra.io/settings/api-keys](https://veydra.io/settings/api-keys)
+    2. Ensure the URL is exactly `https://api.veydra.io/mcp`
+    3. Check that your firewall allows outbound HTTPS connections
+  </Accordion>
+  <Accordion title="Tools not showing up">
+    1. Restart your AI client completely (not just refresh)
+    2. Check that the MCP server is enabled in your client settings
+    3. Verify authentication is configured correctly
+  </Accordion>
+  <Accordion title="Authentication errors">
+    1. Ensure your API key starts with `vk_`
+    2. Check that the Authorization header format is `Bearer YOUR_API_KEY`
+    3. Generate a new API key if the current one may be compromised
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book" href="/api-reference/introduction">
+    Explore the full API documentation
+  </Card>
+  <Card title="Support" icon="envelope" href="mailto:support@veydra.io">
+    Contact our support team
+  </Card>
+</CardGroup>

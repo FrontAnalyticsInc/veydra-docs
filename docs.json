@@ -40,6 +40,11 @@
               "components/stock-flow-diagrams"
             ]
           }
+        ,
+          {
+            "group": "AI & Agents",
+            "pages": ["mcp-integration-guide"]
+          }
         ]
       },
       {
