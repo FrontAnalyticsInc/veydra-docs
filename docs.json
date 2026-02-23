@@ -22,8 +22,18 @@
             "pages": [
               "features/projects",
               "features/model-playground", 
+              "features/running-models-locally",
               "features/simulation",
-              "features/collaboration"
+              "features/collaboration",
+              "features/lti-integration"
+            ]
+          },
+          {
+            "group": "LTI / LMS Guides",
+            "pages": [
+              "lti/moodle",
+              "lti/canvas",
+              "lti/other-platforms"
             ]
           },
           {

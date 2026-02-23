@@ -1,0 +1,384 @@
+---
+title: 'LTI Integration'
+description: 'Connect Veydra to your Learning Management System with LTI 1.3'
+---
+
+## Overview
+
+Veydra supports **LTI 1.3** (Learning Tools Interoperability), the industry standard for connecting learning tools to Learning Management Systems. Once configured, students can launch Veydra labs directly from their LMS course — no separate login required.
+
+<Info>
+  LTI 1.3 is an [IMS Global standard](https://www.imsglobal.org/activity/learning-tools-interoperability) supported by virtually every modern LMS including Moodle, Canvas, Blackboard, Brightspace, Sakai, Schoology, and Open edX.
+</Info>
+
+### How It Works
+
+When a student clicks a Veydra activity in their LMS:
+
+1. The LMS sends a secure, signed request to Veydra (OIDC login + JWT)
+2. Veydra verifies the request and identifies the student
+3. A Veydra account is automatically created (or linked) for the student
+4. The student is granted access to the assigned lab with the configured role
+5. The student lands directly in the lab — no additional sign-up needed
+
+### Supported LMS Platforms
+
+<CardGroup cols={3}>
+  <Card title="Moodle" icon="graduation-cap">
+    Full LTI 1.3 support with auto-fill configuration
+  </Card>
+  <Card title="Canvas" icon="chalkboard">
+    Instructure Canvas with Developer Key integration
+  </Card>
+  <Card title="Blackboard" icon="building-columns">
+    Blackboard Learn Ultra with REST API integration
+  </Card>
+  <Card title="D2L Brightspace" icon="sun">
+    Brightspace with standard LTI Advantage
+  </Card>
+  <Card title="Sakai" icon="book-open">
+    Open-source LMS with LTI 1.3 support
+  </Card>
+  <Card title="Schoology" icon="school">
+    PowerSchool Schoology LTI 1.3 apps
+  </Card>
+</CardGroup>
+
+Additional platforms: **Open edX** and **OLI Torus** are also supported with built-in auto-fill presets.
+
+---
+
+## Prerequisites
+
+Before configuring LTI:
+
+<Check>You have a Veydra account with lab management permissions</Check>
+<Check>You have at least one lab created in Veydra (Account → Manage Labs)</Check>
+<Check>You have administrator access to your LMS</Check>
+<Check>Your LMS supports **LTI 1.3** (not the older LTI 1.1)</Check>
+
+---
+
+## Step 1: Get Your Tool Configuration
+
+Every Veydra account has a set of public URLs that you'll enter into your LMS. These identify Veydra as an external tool provider.
+
+<Steps>
+  <Step title="Open LTI Integrations">
+    Sign in at [app.veydra.io](https://app.veydra.io) and go to **Account → LTI Integrations** in the sidebar (under the Labs section).
+  </Step>
+  <Step title="Copy the Tool Configuration URLs">
+    At the top of the page you'll see the **Your Tool Configuration** card with four values:
+
+    | Field | Description | Example |
+    |-------|-------------|---------|
+    | **Tool URL / Launch URL** | Where the LMS sends the launch request | `https://api.veydra.io/lti/launch` |
+    | **Login Initiation URL** | Where the LMS begins the OIDC flow | `https://api.veydra.io/lti/login` |
+    | **Redirect URI(s)** | Allowed redirect targets after login | `https://api.veydra.io/lti/launch` |
+    | **Public Keyset URL (JWKS)** | Veydra's public keys for signature verification | `https://api.veydra.io/lti/jwks` |
+
+    Use the **Copy** button next to each value.
+  </Step>
+</Steps>
+
+<Tip>
+  These URLs are the same for every platform registration — you only need to copy them once.
+</Tip>
+
+---
+
+## Step 2: Register Veydra in Your LMS
+
+This step happens inside your LMS admin panel. The exact steps vary by platform — choose your LMS below:
+
+<AccordionGroup>
+  <Accordion icon="graduation-cap" title="Moodle">
+    1. Go to **Site administration → Plugins → Activity modules → External tool → Manage tools**
+    2. Click **configure a tool manually**
+    3. Fill in:
+       - **Tool name**: `Veydra` (or any name you prefer)
+       - **Tool URL**: paste the **Tool URL / Launch URL** from Veydra
+       - **LTI version**: select **LTI 1.3**
+       - **Public key type**: select **Keyset URL**
+       - **Public keyset**: paste the **Public Keyset URL (JWKS)** from Veydra
+       - **Initiate login URL**: paste the **Login Initiation URL** from Veydra
+       - **Redirection URI(s)**: paste the **Redirect URI(s)** from Veydra
+    4. Under **Tool configuration usage**, select **Show as preconfigured tool when adding an external tool**
+    5. Click **Save changes**
+    6. Moodle will display the tool's configuration details — **copy the Client ID** (you'll need it in Step 3)
+
+    <Note>
+      You can also find the Client ID later by clicking "View configuration details" on the tool's entry in the Manage tools list.
+    </Note>
+  </Accordion>
+
+  <Accordion icon="chalkboard" title="Canvas">
+    1. Go to **Admin → Developer Keys → + Developer Key → + LTI Key**
+    2. Choose **Manual Entry** (or paste a JSON config URL if available)
+    3. Fill in:
+       - **Key Name**: `Veydra`
+       - **Redirect URIs**: paste the **Redirect URI(s)** from Veydra
+       - **Target Link URI**: paste the **Tool URL / Launch URL** from Veydra
+       - **OpenID Connect Initiation URL**: paste the **Login Initiation URL** from Veydra
+       - **JWK Method**: select **Public JWK URL**, paste the **Public Keyset URL (JWKS)** from Veydra
+    4. Click **Save** — Canvas generates a **Client ID** (a long number). Copy it.
+    5. Enable the key by toggling its **State** to **ON**
+    6. Go to **Settings → Apps → + App → By Client ID** and paste the Client ID to install at the course/account level
+  </Accordion>
+
+  <Accordion icon="building-columns" title="Blackboard Learn (Ultra)">
+    1. Go to **System Admin → Integrations → LTI Tool Providers → Register LTI 1.3 Tool**
+    2. Enter the **Client ID** (you may need to register the application first via the Developer Portal to obtain one)
+    3. Fill in:
+       - **Tool Provider URL**: paste the **Tool URL / Launch URL**
+       - **Login Initiation URL**: paste the **Login Initiation URL**
+       - **Tool Redirect URL(s)**: paste the **Redirect URI(s)**
+       - **Tool JWKS URL**: paste the **Public Keyset URL (JWKS)**
+    4. Set **Tool Status** to **Approved**
+    5. Copy the **Client ID** and **Deployment ID** shown in the confirmation
+
+    <Warning>
+      Blackboard's exact admin screens differ between Original and Ultra experiences. The steps above follow the Ultra workflow.
+    </Warning>
+  </Accordion>
+
+  <Accordion icon="sun" title="D2L Brightspace">
+    1. Go to **Manage Extensibility → LTI Advantage** (or **External Learning Tools → Manage Tool Providers**)
+    2. Click **New Registration / Register Tool**
+    3. Fill in:
+       - **Name**: `Veydra`
+       - **Domain**: `api.veydra.io`
+       - **Redirect URLs**: paste the **Redirect URI(s)**
+       - **OpenID Connect Login URL**: paste the **Login Initiation URL**
+       - **Keyset URL**: paste the **Public Keyset URL (JWKS)**
+       - **Target Link URI**: paste the **Tool URL / Launch URL**
+    4. Click **Register** — Brightspace generates a **Client ID** and **Deployment ID**. Copy both.
+    5. Create a **Deployment** and link it to the desired org units (courses)
+  </Accordion>
+
+  <Accordion icon="book-open" title="Sakai">
+    1. Go to **Administration Workspace → External Tools (LTI)** or the site's **External Tools** page
+    2. Click **Install LTI 1.x Tool**
+    3. Fill in:
+       - **Tool Title**: `Veydra`
+       - **Launch URL**: paste the **Tool URL / Launch URL**
+       - **LTI 1.3**: check the checkbox
+       - **OIDC Auth Endpoint**: paste the **Login Initiation URL**
+       - **OIDC Token Endpoint**: *(leave blank — Veydra uses key-based validation)*
+       - **OIDC Keyset URL**: paste the **Public Keyset URL (JWKS)**
+       - **Redirect URL(s)**: paste the **Redirect URI(s)**
+    4. Click **Save** — copy the generated **Client ID**
+  </Accordion>
+
+  <Accordion icon="school" title="Schoology (PowerSchool)">
+    1. Go to **System Settings → Integration → External Tools → Add External Tool Provider**
+    2. Set the **LTI version** to **1.3**
+    3. Fill in:
+       - **Tool Name**: `Veydra`
+       - **Launch URL**: paste the **Tool URL / Launch URL**
+       - **OpenID Connect Login**: paste the **Login Initiation URL**
+       - **Redirect URIs**: paste the **Redirect URI(s)**
+       - **JWKS URL**: paste the **Public Keyset URL (JWKS)**
+    4. Save and copy the generated **Client ID**
+  </Accordion>
+
+  <Accordion icon="globe" title="Open edX">
+    1. Go to **Django Admin → LTI 1.3 (via `/admin/`)** or **Studio → Advanced Settings**
+    2. Add a new **LtiToolKey** with:
+       - **Name**: `Veydra`
+       - **Key type**: `jwk_url`
+       - **JWK URL**: paste the **Public Keyset URL (JWKS)**
+    3. Add a new **LtiTool** and fill in:
+       - **Tool Name**: `Veydra`
+       - **Launch URL**: paste the **Tool URL / Launch URL**
+       - **OIDC Login URL**: paste the **Login Initiation URL**
+       - **Redirect URIs**: paste the **Redirect URI(s)**
+    4. Copy the **Client ID** from the created tool entry
+  </Accordion>
+
+  <Accordion icon="flask" title="OLI Torus">
+    1. In Torus admin, go to **Institutions → Registration** or **LTI 1.3 Tool Configuration**
+    2. Fill in:
+       - **Tool Name**: `Veydra`
+       - **Target Link URI**: paste the **Tool URL / Launch URL**
+       - **OIDC Login Init URL**: paste the **Login Initiation URL**
+       - **Redirect URIs**: paste the **Redirect URI(s)**
+       - **JWK Set URL**: paste the **Public Keyset URL (JWKS)**
+    3. Save and copy the generated **Client ID** and **Deployment ID**
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Step 3: Register the Platform in Veydra
+
+Now go back to Veydra and tell it about your LMS so it can validate incoming launch requests.
+
+<Steps>
+  <Step title="Click Register Platform">
+    On the **LTI Integrations** page (`Account → LTI Integrations`), click the **Register Platform** button.
+  </Step>
+  <Step title="Select Your LMS Type">
+    Choose your LMS from the **LMS Type** dropdown. This auto-fills the endpoint URL paths so you only need to enter your LMS base URL.
+
+    Supported presets: Moodle, Canvas, Blackboard Learn (Ultra), D2L Brightspace, Sakai, Schoology (PowerSchool), Open edX, OLI Torus.
+
+    <Tip>
+      If your LMS is not listed, leave the dropdown empty and fill in the URLs manually. Your LMS admin documentation will have the correct endpoint paths.
+    </Tip>
+  </Step>
+  <Step title="Fill in Platform Details">
+    | Field | Required | Description |
+    |-------|----------|-------------|
+    | **Platform Name** | Yes | A friendly name (e.g. "My University Moodle") |
+    | **Issuer (Platform ID)** | Yes | Your LMS base URL (e.g. `https://moodle.university.edu`). When you type this with a preset selected, the endpoint URLs auto-fill. |
+    | **Client ID** | Yes | The ID your LMS generated in Step 2 |
+    | **Deployment ID** | No | Some LMS platforms provide this alongside the Client ID |
+    | **Authentication Login URL** | Yes | Auto-filled by preset, or enter manually |
+    | **Access Token URL** | Yes | Auto-filled by preset, or enter manually |
+    | **Public Keyset URL (JWKS)** | Yes | Auto-filled by preset, or enter manually |
+    | **Default Lab** | No | The lab that students land on by default when launching from this LMS |
+    | **Default Role** | No | **Student** (default), Viewer, or Instructor — the Veydra role assigned to users who launch via LTI |
+  </Step>
+  <Step title="Save">
+    Click **Register Platform**. The platform appears in your **Registered Platforms** table and is immediately active.
+  </Step>
+</Steps>
+
+<Warning>
+  Double-check that the **Client ID** and **Issuer** match exactly what your LMS shows. A mismatch will cause launch requests to be rejected.
+</Warning>
+
+---
+
+## Step 4: Add Veydra to a Course
+
+With the platform registered, you can now add Veydra as an activity in your LMS courses.
+
+<AccordionGroup>
+  <Accordion icon="graduation-cap" title="Moodle">
+    1. Go to your course → **Turn editing on**
+    2. Click **Add an activity or resource → External tool**
+    3. Select **Veydra** from the **Preconfigured tool** dropdown
+    4. Optionally set a custom **Activity name** (e.g. "System Dynamics Lab — Population Model")
+    5. To send students to a specific lab, expand **Tool configuration → Custom parameters** and add:
+       ```
+       lab_slug=your-lab-slug
+       ```
+    6. Click **Save and display** to test the launch
+  </Accordion>
+
+  <Accordion icon="chalkboard" title="Canvas">
+    1. Go to your course → **Assignments** or **Modules → Add Item → External Tool**
+    2. Select **Veydra** from the list
+    3. To target a specific lab, add `?lab_slug=your-lab-slug` to the launch URL, or use Canvas's custom parameter field
+    4. Save and test
+  </Accordion>
+
+  <Accordion icon="building-columns" title="Blackboard / Brightspace / Sakai / Schoology">
+    The general process is the same across platforms:
+    1. Navigate to your course content area
+    2. Add a new **External Tool / LTI Link** activity
+    3. Select the registered **Veydra** tool
+    4. Optionally configure the `lab_slug` custom parameter to target a specific lab
+    5. Save and test the launch as a student
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Custom parameters**: You can override the default lab by setting `lab_slug` as a custom LTI parameter in the activity configuration. This lets you link different course activities to different Veydra labs.
+</Tip>
+
+---
+
+## Managing Platforms
+
+### Editing a Registration
+
+From **Account → LTI Integrations**, click **Edit** on any registered platform to update its details (name, URLs, default lab, or default role). Changes take effect immediately.
+
+### Deleting a Registration
+
+Click **Delete** on a platform registration. You'll be asked to confirm. Once deleted, students will no longer be able to launch from that LMS.
+
+<Warning>
+  Deleting a platform does not remove the student accounts that were created via LTI. Students who were auto-provisioned can still sign in to [app.veydra.io](https://app.veydra.io) directly.
+</Warning>
+
+### Viewing & Changing Default Lab
+
+The **Default Lab** column in the platforms table shows which lab students land on after launch. To change it, edit the platform and select a different lab from the dropdown. You can also leave it blank and rely on the `lab_slug` custom parameter per activity.
+
+---
+
+## User Provisioning
+
+When a student launches Veydra from an LMS for the first time, the system automatically:
+
+1. **Looks for an existing linked account** — if the student has launched before, they're signed in immediately
+2. **Matches by email** — if the student's LMS email matches an existing Veydra account, the accounts are linked
+3. **Creates a new account** — if no match is found, a new Veydra account is created using the student's name and email from the LMS
+
+The student is then granted access to the target lab with the configured role (Student, Viewer, or Instructor).
+
+<Note>
+  Instructors in the LMS are mapped to the Veydra role configured on the platform registration (default: Student). To give LMS instructors elevated access, you can change the default role or grant them permissions manually in **Account → Manage Labs**.
+</Note>
+
+---
+
+## Roles & Permissions
+
+The role assigned to LTI users determines what they can do inside a lab:
+
+| Role | Can View Models | Can Adjust Parameters | Can Edit Structure | Can Manage Users |
+|------|:-:|:-:|:-:|:-:|
+| **Student** | ✓ | ✓ | ✗ | ✗ |
+| **Viewer** | ✓ | ✗ | ✗ | ✗ |
+| **Instructor** | ✓ | ✓ | ✓ | ✓ |
+
+The default role is set per-platform when you register it. Individual users can be promoted or changed in **Account → Manage Labs → [Lab] → Users**.
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Launch fails with &quot;Platform not found&quot;">
+    The Issuer URL in Veydra doesn't match what the LMS is sending. Verify:
+    - The **Issuer** field matches your LMS base URL exactly (including `https://` and no trailing slash)
+    - The **Client ID** matches the one your LMS generated
+  </Accordion>
+
+  <Accordion title="Launch fails with &quot;Invalid token&quot;">
+    The JWT signature couldn't be verified. Check:
+    - The **Public Keyset URL (JWKS)** on the platform registration points to the correct LMS endpoint
+    - Your LMS's keyset URL is accessible from the internet (not behind a firewall)
+  </Accordion>
+
+  <Accordion title="Students land on the wrong lab (or no lab)">
+    - Check the **Default Lab** setting on the platform registration
+    - Verify the `lab_slug` custom parameter in the LMS activity configuration
+    - Ensure the lab exists and is active in **Account → Manage Labs**
+  </Accordion>
+
+  <Accordion title="Students get &quot;Access denied&quot; after launch">
+    The student's account was created but not granted access. This can happen if the lab's access control changed after the initial launch. Go to **Account → Manage Labs → [Lab] → Users** and verify the student's role.
+  </Accordion>
+
+  <Accordion title="&quot;Authentication required&quot; on platform management endpoints">
+    You must be signed in to Veydra to manage platform registrations. The Tool Configuration URLs (JWKS, Login, Launch) are public and don't require authentication.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Security
+
+Veydra's LTI implementation follows IMS Global security best practices:
+
+- **OIDC + JWT**: Every launch is authenticated via OpenID Connect with signed JWTs — no shared secrets
+- **RSA key pairs**: Veydra maintains its own RSA keypair; the public key is served via a standard JWKS endpoint
+- **Nonce validation**: Each login request includes a one-time nonce that expires after 10 minutes
+- **No password storage**: LTI users authenticate through their LMS; Veydra never sees or stores LMS passwords
+- **Firebase Auth**: After JWT validation, users receive a standard Firebase session — the same authentication used by all Veydra users

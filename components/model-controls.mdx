@@ -138,44 +138,125 @@ The "Active Parameters" section header includes control buttons:
 
 ## Scenario Management
 
-### Saving Scenarios
+### Scenario Selector
 
-Preserve interesting parameter combinations for future use:
+The Scenario Selector is an inline dropdown in the controls toolbar (visible in Experiment and Calibrate modes) that lets you manage named parameter sets:
+
+<Steps>
+  <Step title="Create a Scenario">
+    Adjust parameters to your desired values, then click **Save As** to name and store the scenario. Each scenario captures the full set of current parameter values.
+  </Step>
+  <Step title="Switch Between Scenarios">
+    Use the dropdown to select any saved scenario. The model immediately re-runs with those parameter values while the baseline stays fixed.
+  </Step>
+  <Step title="Update or Delete">
+    Click **Save** to overwrite the selected scenario with current values. Use the trash icon to delete a scenario (with confirmation).
+  </Step>
+</Steps>
+
+### Scenario Features
+
+<CardGroup cols={2}>
+  <Card title="Save" icon="floppy-disk">
+    Update the currently selected scenario with new parameter values
+  </Card>
+  <Card title="Save As" icon="bookmark">
+    Create a new named scenario with custom name and description
+  </Card>
+  <Card title="Load & Switch" icon="folder-open">
+    Instantly load any saved scenario from the dropdown
+  </Card>
+  <Card title="Dirty Indicator" icon="asterisk">
+    An asterisk (*) appears when parameters have changed since last save
+  </Card>
+</CardGroup>
+
+### Multi-Scenario Comparison (Decide Mode)
+
+In **Decide mode**, the scenario system extends to multi-scenario comparison:
+
+- **Select multiple scenarios** to overlay on the same chart
+- A virtual **Baseline** scenario is always available for reference
+- Charts show each scenario as a distinct colored line across all stocks
+- The **Analysis Card** provides aggregated comparison metrics
+
+<Note>
+  Scenarios are saved to the backend per model. They persist across sessions and are available to all users with access to the model.
+</Note>
+
+### Scenario Data Model
 
 ```typescript
 interface Scenario {
   id: string;
   name: string;
   description?: string;
-  parameters: Record<string, any>;
-  timestamp: Date;
-  author: string;
+  parameters: Record<string, number | boolean | string>;
+  created_at: string;
+  updated_at: string;
 }
 ```
 
-### Scenario Features
+## Parameter Functions
 
-<CardGroup cols={2}>
-  <Card title="Quick Save" icon="floppy-disk">
-    Save current parameters with auto-generated name
+### Dynamic Parameter Values
+
+Beyond static slider values, parameters can be defined as **time-varying functions** using the Parameter Function Modal. Click the function icon (ƒ) next to any parameter slider to open the modal.
+
+### Input Modes
+
+The modal offers three ways to define a time-varying parameter:
+
+<CardGroup cols={3}>
+  <Card title="Draw" icon="pen">
+    Freehand draw the parameter curve on an interactive canvas. Values snap to the model's time steps.
   </Card>
-  <Card title="Named Scenarios" icon="bookmark">
-    Save with custom names and descriptions
+  <Card title="Function" icon="code">
+    Enter a mathematical expression using `t` as the time variable (e.g., `10 * sin(t / 5) + 50`).
   </Card>
-  <Card title="Load Previous" icon="folder-open">
-    Restore previously saved parameter sets
-  </Card>
-  <Card title="Share Scenarios" icon="share">
-    Export scenarios for team collaboration
+  <Card title="Table" icon="table">
+    Define (time, value) data points directly. Values are linearly interpolated between points.
   </Card>
 </CardGroup>
 
-### Scenario Management UI
+### Drawing Canvas
 
-- **Scenario List**: Dropdown or modal with all saved scenarios
-- **Preview**: Show parameter values before loading
-- **Metadata**: Display save date, author, and description
-- **Organization**: Group scenarios by project or category
+The draw mode provides an interactive canvas with:
+
+- **Grid overlay** with labeled axes (Time and Value)
+- **Default value reference line** (dashed blue) showing the static default
+- **Snap-to-timestep** behavior for consistent data points
+- **Real-time preview** of the curve as you draw
+- Values are bounded by the parameter's min/max range
+
+### Function Expressions
+
+Write expressions using the time variable `t`:
+
+```
+10 * sin(t / 5) + 50       # Oscillating parameter
+t * 0.5 + 10                # Linear ramp
+100 if t > 50 else 50       # Step function
+```
+
+Expressions are validated in real-time with error feedback.
+
+### Table Mode
+
+Define explicit (time, value) pairs:
+
+| Time | Value |
+|------|-------|
+| 0    | 10.0  |
+| 25   | 15.0  |
+| 50   | 30.0  |
+| 100  | 25.0  |
+
+Add or remove rows as needed. Values between defined points are linearly interpolated during simulation.
+
+<Tip>
+  Parameter functions are especially powerful in Experiment mode — define how a policy parameter changes over time rather than using a single constant value.
+</Tip>
 
 ## Parameter State Management
 

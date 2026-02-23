@@ -1,0 +1,146 @@
+---
+title: 'Canvas Setup Guide'
+description: 'Step-by-step guide to connect Veydra to Instructure Canvas via LTI 1.3'
+---
+
+## Overview
+
+This guide walks through connecting **Canvas** to Veydra using LTI 1.3. Canvas uses a **Developer Key** to register external tools at the institution level, then deploys them to courses.
+
+<Info>
+  **Time required**: ~10 minutes  
+  **What you need**: Canvas admin or sub-account admin access + a Veydra account with at least one lab
+</Info>
+
+---
+
+## Part A: Create a Developer Key in Canvas
+
+<Steps>
+  <Step title="Open Developer Keys">
+    In Canvas, go to **Admin → [Account] → Developer Keys**.
+
+    Click **+ Developer Key → + LTI Key**.
+  </Step>
+
+  <Step title="Configure the LTI Key">
+    Select **Manual Entry** and fill in the following using the values from your Veydra LTI Integrations page ([app.veydra.io/account/lti](https://app.veydra.io/account/lti)):
+
+    | Canvas Field | Value |
+    |---|---|
+    | **Key Name** | `Veydra` |
+    | **Redirect URIs** | Paste the **Redirect URI(s)** from Veydra (one per line) |
+    | **Target Link URI** | Paste the **Tool URL / Launch URL** from Veydra |
+    | **OpenID Connect Initiation URL** | Paste the **Login Initiation URL** from Veydra |
+    | **JWK Method** | Select **Public JWK URL** |
+    | **Public JWK URL** | Paste the **Public Keyset URL (JWKS)** from Veydra |
+
+    Under **LTI Advantage Services**, enable the scopes you need (Roster, Grades, etc.) — or leave defaults.
+  </Step>
+
+  <Step title="Save and Enable">
+    Click **Save**. Canvas generates a **Client ID** (a long numeric string like `170000000000123`).
+
+    **Important**: Toggle the key's **State** to **ON** (the toggle next to the key name). The key won't work until enabled.
+
+    Copy the **Client ID** — you'll need it in Part B.
+  </Step>
+
+  <Step title="Install in Course/Account">
+    Go to **Settings → Apps → + App**.
+
+    | Field | Value |
+    |---|---|
+    | **Configuration Type** | **By Client ID** |
+    | **Client ID** | Paste the Client ID from Step 3 |
+
+    Click **Submit**. Canvas installs the tool and generates a **Deployment ID**.
+  </Step>
+</Steps>
+
+---
+
+## Part B: Register Canvas in Veydra
+
+<Steps>
+  <Step title="Open LTI Integrations">
+    In Veydra, go to **Account → LTI Integrations** → click **Register Platform**.
+  </Step>
+
+  <Step title="Select Canvas Preset">
+    Set **LMS Type** to **Canvas**. The endpoint URL paths auto-fill.
+  </Step>
+
+  <Step title="Fill in Details">
+    | Field | What to enter |
+    |---|---|
+    | **Platform Name** | e.g. `Our Canvas Instance` |
+    | **Issuer (Platform ID)** | `https://canvas.instructure.com` (for cloud Canvas) or your self-hosted Canvas URL |
+    | **Client ID** | The Client ID from Part A, Step 3 |
+    | **Deployment ID** | The Deployment ID from Part A, Step 4 |
+    | **Default Lab** | Select the lab students should land on |
+    | **Default Role** | Usually **Student** |
+
+    <Warning>
+      For **Canvas Cloud**, the Issuer is always `https://canvas.instructure.com` regardless of your institution's subdomain. For **self-hosted Canvas**, use your actual Canvas URL.
+    </Warning>
+  </Step>
+
+  <Step title="Save">
+    Click **Register Platform**. The integration is now active.
+  </Step>
+</Steps>
+
+---
+
+## Part C: Add Veydra to a Course
+
+<Steps>
+  <Step title="Navigate to Your Course">
+    Go to the Canvas course where you want to add a Veydra activity.
+  </Step>
+
+  <Step title="Add an External Tool Assignment">
+    You have two options:
+
+    **Option 1 — Module Item**:
+    Go to **Modules → + (add item) → External Tool → Veydra**
+
+    **Option 2 — Assignment**:
+    Go to **Assignments → + Assignment**, set **Submission Type** to **External Tool**, click **Find** and select **Veydra**.
+  </Step>
+
+  <Step title="Target a Specific Lab (Optional)">
+    To send students to a lab different from the default, append a custom parameter to the launch URL:
+
+    ```
+    ?lab_slug=your-lab-slug
+    ```
+
+    Or use Canvas's custom parameter field if available.
+  </Step>
+
+  <Step title="Save and Test">
+    Save the activity and click it to test the launch. You should land in the configured Veydra lab.
+  </Step>
+</Steps>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="&quot;Unauthorized&quot; when launching">
+    - Verify the Developer Key **State** is set to **ON**
+    - Verify the **Client ID** in Veydra matches the one in Canvas
+    - For Canvas Cloud, confirm the Issuer is `https://canvas.instructure.com`
+  </Accordion>
+
+  <Accordion title="Tool doesn't appear in the External Tool list">
+    The Developer Key may not be installed at the course/account level yet. Go to **Settings → Apps → + App → By Client ID** and enter the Client ID.
+  </Accordion>
+
+  <Accordion title="Students can launch but see the wrong lab">
+    Check the **Default Lab** on the Veydra platform registration, or set the `lab_slug` custom parameter on the Canvas assignment.
+  </Accordion>
+</AccordionGroup>

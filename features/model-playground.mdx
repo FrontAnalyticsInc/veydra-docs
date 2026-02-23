@@ -7,6 +7,100 @@ description: 'Interactive environment for building and testing system dynamics m
 
 The Model Playground is Veydra's central workspace where you build, modify, and test your system dynamics models. It provides an interactive environment with real-time feedback and powerful visualization tools.
 
+## Playground Modes
+
+The Model Playground is organized around a **mode-based workflow** that guides you through the full modeling lifecycle. Each mode focuses on a specific phase and adapts the UI — showing relevant panels, controls, and AI assistant context.
+
+Switch modes using the color-coded buttons in the top navigation bar.
+
+<CardGroup cols={3}>
+  <Card title="Presentation" icon="play" color="#dc3545">
+    Interactive guided walkthrough of the model with slides, quizzes, and embedded content
+  </Card>
+  <Card title="Design" icon="wrench" color="#0d6efd">
+    Build and structure your model — edit parameters, code, and stock-flow diagrams
+  </Card>
+  <Card title="Calibrate" icon="flask" color="#0dcaf0">
+    Fine-tune parameters to match real-world data (Pro)
+  </Card>
+  <Card title="Experiment" icon="chart-line" color="#198754">
+    Run what-if scenarios and explore different futures
+  </Card>
+  <Card title="Decide" icon="lightbulb" color="#ffc107">
+    Compare multiple scenarios side-by-side for decision analysis (Pro)
+  </Card>
+</CardGroup>
+
+### Presentation Mode
+
+A read-only guided experience for learning about a model. Content is displayed as scrollable slides with a sticky table of contents sidebar. Slides can include rich text, embedded videos, quizzes, and buttons that navigate to other modes.
+
+- **No editable controls** — Model Controls, System Map, and Code Editor are hidden
+- **AI Assistant** adapts with presentation-specific prompts like "Take a Quick Quiz" and "Summarize this model"
+- Ideal for onboarding, classroom use, or sharing insights with stakeholders
+
+### Design Mode
+
+The primary building mode where all structural changes happen. Parameter changes in Design mode update the **baseline configuration** that applies across all scenarios.
+
+- **Model Editor Panel** — Full access to all sliders (stocks, flows, parameters, simulation settings)
+- **Stock-Flow Diagram** — Fully expanded with Flow, Causal, Params, and Loops tabs
+- **Code Editor** — Direct Python code editing with Pyodide execution panel
+- Charts are hidden so you can focus on model structure
+
+<Note>
+  Changes made in Design mode affect the baseline for ALL scenarios. Use Experiment mode for what-if analysis.
+</Note>
+
+### Calibrate Mode (Pro)
+
+Fine-tune your model to match historical or real-world data. Calibration changes update both baseline and scenario values simultaneously.
+
+- **Calibration Panel** — Specialized parameter controls for data fitting
+- **Charts visible** — See how parameter adjustments affect model output in real time
+- **System Map** — Minimized by default but expandable
+- Supports parameter estimation, historical fit, and validation workflows
+
+<Warning>
+  Calibrate mode requires a Pro subscription. Free users are redirected to Experiment mode.
+</Warning>
+
+### Experiment Mode
+
+Run what-if scenarios using your calibrated baseline. Slider changes only affect the **current scenario's post-intervention behavior** — the baseline stays fixed for comparison.
+
+- **Model Controls** — Shows parameter sliders (not simulation settings) with save/load scenario support
+- **Compare Mode** — Enabled by default, showing baseline vs. scenario on charts
+- **Scenario Selector** — Save, load, rename, and delete named scenarios
+- **Specialized visualizations** — Gantt charts, wait-time scatter plots, spatial visualizations (for applicable models)
+
+### Decide Mode (Pro)
+
+Compare multiple saved scenarios side-by-side to make strategic decisions. Automatically selects the baseline plus up to two user scenarios for comparison.
+
+- **Multi-Scenario Selector** — Choose which scenarios to overlay on charts
+- **Multi-Stock Chart Area** — All stocks shown with scenario overlays
+- **Analysis Card** — Aggregated comparison metrics across scenarios
+- System Map is fully hidden to maximize chart space
+
+### Mode Availability
+
+Not all modes appear for every model. The available modes are determined by the model's metadata:
+
+| Mode | Default | Notes |
+|------|---------|-------|
+| Design | Always available | Core building mode |
+| Calibrate | Always available | Pro-gated |
+| Experiment | Always available | Primary analysis mode |
+| Presentation | Opt-in per model | Requires slide content |
+| Decide | Opt-in per model | Pro-gated |
+
+### AI Assistant Per Mode
+
+The AI Assistant panel automatically adapts to the current mode with a matching color theme, contextual welcome message, and mode-specific action buttons. For example, Design mode offers "Start a guided tutorial" while Decide mode offers "Strategy Comparison" and "Risk Analysis".
+
+---
+
 ## Key Components
 
 The Model Playground consists of several integrated panels that work together:
