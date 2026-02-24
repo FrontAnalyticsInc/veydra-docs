@@ -25,15 +25,7 @@
               "features/running-models-locally",
               "features/simulation",
               "features/collaboration",
-              "features/lti-integration"
-            ]
-          },
-          {
-            "group": "LTI / LMS Guides",
-            "pages": [
-              "lti/moodle",
-              "lti/canvas",
-              "lti/other-platforms"
+              "features/lms-integration"
             ]
           },
           {
