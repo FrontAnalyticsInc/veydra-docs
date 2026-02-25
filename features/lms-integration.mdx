@@ -113,17 +113,44 @@ This step happens inside your LMS admin panel. The exact steps vary by platform 
   </Accordion>
 
   <Accordion icon="chalkboard" title="Canvas">
-    1. Go to **Admin → Developer Keys → + Developer Key → + LTI Key**
-    2. Choose **Manual Entry** (or paste a JSON config URL if available)
-    3. Fill in:
-       - **Key Name**: `Veydra`
-       - **Redirect URIs**: paste the **Redirect URI(s)** from Veydra
-       - **Target Link URI**: paste the **Tool URL / Launch URL** from Veydra
-       - **OpenID Connect Initiation URL**: paste the **Login Initiation URL** from Veydra
-       - **JWK Method**: select **Public JWK URL**, paste the **Public Keyset URL (JWKS)** from Veydra
-    4. Click **Save** — Canvas generates a **Client ID** (a long number). Copy it.
-    5. Enable the key by toggling its **State** to **ON**
-    6. Go to **Settings → Apps → + App → By Client ID** and paste the Client ID to install at the course/account level
+    <Warning>
+      Do NOT use "Add App → By LTI 2 Registration URL" in Canvas — that uses the deprecated LTI 2.0 protocol. Use the Developer Key method below instead.
+    </Warning>
+
+    **Step 1: Create Developer Key**
+    1. Go to **Admin → Developer Keys** (at the root account level)
+    2. Click **+ Developer Key → + LTI Key**
+    3. Choose **Enter URL** and paste Veydra's **Dynamic Registration URL** (shown in Veydra's LTI Integrations page)
+    4. Click **Save** — Canvas auto-fills most settings from the URL
+
+    **Step 2: Configure Placements (Enable Deep Linking)**
+    1. Click **Edit** on the newly created key
+    2. Scroll to **Placements** and add at least one:
+       - **Link Selection** — allows instructors to select Veydra content when adding module items
+       - **Assignment Selection** — allows instructors to select Veydra content when creating assignments
+    3. For each placement, set:
+       - **Target Link URI**: `https://api.veydra.io/lti/launch`
+       - **Message Type**: `LtiDeepLinkingRequest`
+       - *(Optional)* **Icon URL**: `https://app.veydra.io/favicon.png`
+    4. *(Optional)* For grade passback, scroll to **LTI Advantage Services** and enable:
+       - "Can create and view assignment data in the gradebook associated with the tool"
+       - "Can create and update submission results for assignments associated with the tool"
+    5. Click **Save**
+
+    **Step 3: Enable and Install**
+    1. Toggle the key's **State** to **ON**
+    2. Copy the **Client ID** (long number like `10000000000123`)
+    3. Go to your **Course → Settings → Apps → + App**
+    4. Select **By Client ID**, paste the ID, and click **Submit**
+
+    **Step 4: Register in Veydra**
+    1. Return to Veydra's **Account → LTI Integrations** page
+    2. Click **Register Platform**, select **Canvas**, enter your Canvas URL and the Client ID
+    3. Click **Register Platform**
+
+    <Tip>
+      After installation, instructors can add Veydra content by going to **Modules → + → External Tool → Veydra** or **Assignments → + Assignment → External Tool**. A content picker will appear showing available models.
+    </Tip>
   </Accordion>
 
   <Accordion icon="building-columns" title="Blackboard Learn (Ultra)">
@@ -268,11 +295,18 @@ With the platform registered, you can now add Veydra as an activity in your LMS 
     6. Click **Save and display** to test the launch
   </Accordion>
 
-  <Accordion icon="chalkboard" title="Canvas">
-    1. Go to your course → **Assignments** or **Modules → Add Item → External Tool**
+  <Accordion icon="chalkboard" title="Canvas (with Deep Linking)">
+    If you configured **Link Selection** or **Assignment Selection** placements with `LtiDeepLinkingRequest`:
+
+    1. Go to your course → **Modules → + → External Tool** (or **Assignments → + Assignment → External Tool**)
     2. Select **Veydra** from the list
-    3. To target a specific lab, add `?lab_slug=your-lab-slug` to the launch URL, or use Canvas's custom parameter field
-    4. Save and test
+    3. A **content picker** opens showing available models from your Veydra account
+    4. Select one or more models, click **Add Selected**
+    5. The selected content is embedded as a link — students click it to launch directly into that model
+
+    <Note>
+      The content picker shows models belonging to the user who registered the LTI platform in Veydra. To show a different user's models, edit the platform registration and set the **Owner Filter** field.
+    </Note>
   </Accordion>
 
   <Accordion icon="building-columns" title="Blackboard / Brightspace / Sakai / Schoology">
@@ -286,8 +320,44 @@ With the platform registered, you can now add Veydra as an activity in your LMS 
 </AccordionGroup>
 
 <Tip>
-  **Custom parameters**: You can override the default lab by setting `lab_slug` as a custom LTI parameter in the activity configuration. This lets you link different course activities to different Veydra labs.
+  **Custom parameters vs Deep Linking**: You can target specific content by either:
+  - Using the **Deep Linking content picker** (Canvas, Moodle 4.0+) — visual selection, no URL editing
+  - Setting `lab_slug` or `model_id` as custom LTI parameters — works on any LMS
 </Tip>
+
+---
+
+## Deep Linking Content Picker
+
+When configured for Deep Linking, Veydra displays an interactive content picker inside your LMS. This lets instructors visually browse and select which model or lab to embed.
+
+### How Deep Linking Works
+
+1. Instructor clicks **Add External Tool → Veydra** in the LMS
+2. The LMS sends a `LtiDeepLinkingRequest` to Veydra
+3. Veydra displays a content picker showing available models
+4. Instructor selects one or more models and clicks **Add Selected**
+5. Veydra sends a signed response back to the LMS with the selected content
+6. The LMS creates a link/assignment pointing to that specific model
+
+### Configuring Deep Linking
+
+Deep Linking requires your LMS to be configured with the correct **placement** and **message type**:
+
+| LMS | Where to Configure | Message Type Setting |
+|-----|-------------------|---------------------|
+| **Canvas** | Developer Key → Placements → Link/Assignment Selection | Set to `LtiDeepLinkingRequest` |
+| **Moodle** | External tool → Content Selection URL | Auto-detected from tool config |
+| **Blackboard** | LTI Tool → Deep Linking Settings | Enable "Deep Linking" |
+| **Brightspace** | LTI Tool → Deployment → Deep Linking | Enable and set return URLs |
+
+### Content Visibility
+
+The content picker shows models belonging to:
+1. The **Owner Filter** configured on the platform (if set)
+2. Otherwise, the **user who registered** the LTI platform in Veydra
+
+To change which models appear, edit your platform registration in **Account → LTI Integrations** and set the **Owner Filter** to the desired user ID.
 
 ---
 
