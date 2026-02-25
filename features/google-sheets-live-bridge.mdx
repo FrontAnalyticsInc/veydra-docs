@@ -1,0 +1,231 @@
+---
+title: 'Google Sheets Live Bridge'
+description: 'Connect Google Sheets to Veydra for real-time bi-directional model sync'
+---
+
+## Overview
+
+The **Veydra Live Bridge** is a Google Workspace Add-on that connects Google Sheets directly to the Veydra System Dynamics Engine. It replaces static file exports with **real-time, bi-directional sync** — giving you native spreadsheet recalculation with sub-200ms latency.
+
+<Info>
+  Unlike legacy tools that require exporting `.sem` files and manually importing data, the Live Bridge maintains a persistent connection to your Veydra models with automatic updates.
+</Info>
+
+### Key Benefits
+
+<CardGroup cols={2}>
+  <Card title="Real-Time Sync" icon="bolt">
+    Changes in Sheets instantly update your Veydra model, and simulation results flow back automatically
+  </Card>
+  <Card title="Native Experience" icon="table">
+    Works with familiar spreadsheet features — formulas, ranges, and dynamic arrays
+  </Card>
+  <Card title="Multi-User Collaboration" icon="users">
+    Multiple users can work on the same sheet with real-time updates across all sessions
+  </Card>
+  <Card title="Live Model Info" icon="info">
+    Generate auto-updating sheets with all model variables, units, and current values
+  </Card>
+</CardGroup>
+
+---
+
+## How It Works
+
+```text
++----------------------------------------------+
+|                Google Sheet                   |
+|                                               |
+|  +-------------+   +----------------------+  |
+|  |  Sidebar UI |   |  =VEYDRA.FORECAST()  |  |
+|  |  (Controls) |   |  Custom Functions    |  |
+|  +------+------+   +----------+-----------+  |
+|         |                     |              |
+|  +------+---------------------+------------+ |
+|  |         Apps Script Host Layer          | |
+|  +--------------------+--------------------+ |
++------------------------|---------------------+
+                         |  REST + WebSocket
+                         v
+           +------------------------+
+           |   Veydra Cloud Engine  |
+           +------------------------+
+```
+
+The Live Bridge consists of:
+
+1. **Sidebar UI** — A React-based panel for authentication, model selection, and parameter controls
+2. **Custom Functions** — Spreadsheet formulas like `=VEYDRA.FORECAST()` that fetch simulation results
+3. **Apps Script Layer** — Handles triggers, sheet I/O, and the WebSocket connection to Veydra
+
+---
+
+## Features
+
+### Bi-Directional Cell Mapping
+
+Map spreadsheet cells directly to Veydra model nodes:
+
+**Sheet → Veydra (Inputs)**
+1. Select a cell range in your spreadsheet
+2. Open the Veydra sidebar and click **Bind**
+3. Choose the input node to map (e.g., "Marketing Spend")
+4. Changes to those cells automatically update the model
+
+**Veydra → Sheet (Outputs)**
+
+Use the `VEYDRA.FORECAST` function to pull simulation results:
+
+```
+=VEYDRA.FORECAST("model_id", "input_range", "output_node")
+```
+
+<Tip>
+  This function supports **Dynamic Arrays** — a 12-month forecast automatically populates 12 cells without needing to copy the formula down.
+</Tip>
+
+### Reactive Sliders
+
+The sidebar includes interactive sliders for model parameters:
+
+- Drag a slider to change a parameter value
+- The Veydra engine recalculates immediately
+- Results update in your spreadsheet in real-time (no manual refresh)
+
+This is perfect for sensitivity analysis and exploring "what-if" scenarios.
+
+### Model Info Generator
+
+Generate a comprehensive summary sheet of your connected model:
+
+1. Open the sidebar and click **Generate Model Info Sheet**
+2. A new sheet is created with all variables, their units, and current values
+3. Unlike static exports, this sheet stays synchronized with your model
+
+### Multi-User Real-Time Sync
+
+When multiple users have the same Google Sheet open:
+
+- User A changes a parameter via the sidebar
+- User B sees the updated values appear in their sheet automatically
+- Both users see the same simulation results
+
+This enables collaborative scenario planning and teaching sessions.
+
+---
+
+## Getting Started
+
+### Installation
+
+<Steps>
+  <Step title="Open Google Sheets">
+    Create a new spreadsheet or open an existing one at [sheets.google.com](https://sheets.google.com)
+  </Step>
+  <Step title="Install the Add-on">
+    Go to **Extensions → Add-ons → Get add-ons** and search for "Veydra Live Bridge"
+    
+    Click **Install** and grant the required permissions
+  </Step>
+  <Step title="Open the Sidebar">
+    After installation, go to **Extensions → Veydra Live-Bridge → Open Sidebar**
+  </Step>
+  <Step title="Sign In">
+    Click **Sign in with Google** in the sidebar to authenticate with your Veydra account
+  </Step>
+</Steps>
+
+### Connecting a Model
+
+<Steps>
+  <Step title="Select a Model">
+    In the sidebar, use the **Model** dropdown to select from your available Veydra models
+  </Step>
+  <Step title="View Model Details">
+    Click **Generate Model Info Sheet** to see all available variables and their current values
+  </Step>
+  <Step title="Bind Input Cells">
+    Select cells in your sheet, then click **Bind** in the sidebar to map them to model inputs
+  </Step>
+  <Step title="Add Output Formulas">
+    Enter `=VEYDRA.FORECAST()` formulas to display simulation results
+  </Step>
+</Steps>
+
+---
+
+## Custom Functions Reference
+
+### VEYDRA.FORECAST
+
+Runs a simulation and returns the forecast values for an output variable.
+
+```
+=VEYDRA.FORECAST(model_id, input_range, output_node, [periods])
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `model_id` | String | The Veydra model ID (found in the model URL) |
+| `input_range` | Range | Cell range containing input values |
+| `output_node` | String | Name of the output variable to return |
+| `periods` | Number | (Optional) Number of time periods to forecast |
+
+**Example:**
+```
+=VEYDRA.FORECAST("12345", B2:B13, "Revenue", 12)
+```
+
+Returns a 12-row array of forecasted revenue values based on the inputs in B2:B13.
+
+---
+
+## Comparison with Legacy Tools
+
+| Feature | Stella/Vensim (Legacy) | Veydra Live Bridge |
+|---------|------------------------|-------------------|
+| Data sync | Static .sem file exports | Live WebSocket connection |
+| Update latency | Manual re-import | Under 200ms automatic |
+| Collaboration | Single-user file ownership | Multi-user real-time sync |
+| Info sheets | Static snapshot | Live-updated |
+| Dynamic arrays | Not supported | Native support |
+| Version control | Manual file copies | Cloud-based with history |
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Sidebar won't open">
+    - Ensure you've granted the add-on the required permissions
+    - Try refreshing the page and reopening via **Extensions → Veydra Live-Bridge → Open Sidebar**
+    - Check that pop-ups are not blocked for Google Sheets
+  </Accordion>
+
+  <Accordion title="Model not appearing in dropdown">
+    - Verify you're signed in with the correct Veydra account
+    - Check that you have at least one model created in Veydra
+    - Try clicking the refresh button next to the model dropdown
+  </Accordion>
+
+  <Accordion title="VEYDRA.FORECAST returns an error">
+    - Verify the model ID is correct (check the URL in app.veydra.io)
+    - Ensure the output node name matches exactly (case-sensitive)
+    - Check that your input range contains valid numeric values
+  </Accordion>
+
+  <Accordion title="Changes not syncing in real-time">
+    - Check your internet connection
+    - The WebSocket connection may have timed out — close and reopen the sidebar
+    - Verify the Veydra service is operational at [status.veydra.io](https://status.veydra.io)
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Requirements
+
+- Google account with access to Google Sheets
+- Veydra account with at least one model
+- Modern browser (Chrome, Firefox, Edge, or Safari)
+- Internet connection for real-time sync

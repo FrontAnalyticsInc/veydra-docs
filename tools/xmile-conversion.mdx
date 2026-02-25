@@ -1,0 +1,128 @@
+---
+title: "XMILE Conversion"
+description: "Import system dynamics models from Stella, Vensim, and other XMILE-compatible tools"
+---
+
+## Overview
+
+Veydra supports importing system dynamics models from tools that export to the XMILE standard. XMILE (XML Interchange Language for System Dynamics) is an open standard that enables model portability across different system dynamics platforms.
+
+<Info>
+**Supported Tools**: Stella Architect, Stella Professional, Vensim, and any software that exports valid XMILE format.
+</Info>
+
+## Supported File Formats
+
+| Extension | Description |
+|-----------|-------------|
+| `.xmile` | Standard XMILE XML format |
+| `.stmx` | Stella model files |
+| `.xml` | Generic XML with XMILE structure |
+| `.mdl` | Vensim model definition files |
+
+## Model Elements Converted
+
+The XMILE parser extracts and converts:
+
+- **Stocks** - Accumulator variables with initial values
+- **Flows** - Rate variables connecting stocks
+- **Auxiliaries** - Helper variables and calculations
+- **Modules** - Submodels with their connections
+- **Simulation Settings** - Time units, start/stop times, and time step (DT)
+
+### Function Support
+
+Common system dynamics functions are automatically translated:
+
+| XMILE Function | Description |
+|----------------|-------------|
+| `PULSE` | Generate pulse at specified time |
+| `STEP` | Step function |
+| `RAMP` | Linear ramp |
+| `DELAY1`, `DELAY3` | First and third-order delays |
+| `SMOOTH`, `SMOOTHI` | Exponential smoothing |
+| `MIN`, `MAX`, `ABS` | Basic math functions |
+| `IF THEN ELSE` | Conditional logic |
+| `TIME` | Current simulation time |
+
+## How to Import
+
+### From the Web App
+
+1. Navigate to your project or create a new one
+2. Click **Import Model** or use the **Upload XMILE** option
+3. Select your `.xmile`, `.stmx`, `.xml`, or `.mdl` file
+4. Provide a name for your model (optional - defaults to filename)
+5. Click **Upload**
+
+The conversion runs automatically and creates:
+- A new project (if needed)
+- A model in **Design Mode** ready for editing
+- A linked GitHub repository for version control
+
+### Via API
+
+```bash
+curl -X POST https://api.veydra.io/model/upload-xmile \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "file=@your_model.stmx" \
+  -F "model_name=My System Dynamics Model" \
+  -F "description=Imported from Stella"
+```
+
+**Response:**
+```json
+{
+  "model_id": 12345678,
+  "project_id": 87654321,
+  "repository_url": "https://github.com/veydra-models/model-12345678",
+  "message": "XMILE file uploaded successfully. Conversion job started."
+}
+```
+
+## Conversion Process
+
+```
++-------------------+     +------------------+     +-------------------+
+|   Upload XMILE    | --> |   Parse & Validate   | --> |   Convert to VMS  |
+|   (.stmx, .xml)   |     |   Extract elements   |     |   Python format   |
++-------------------+     +------------------+     +-------------------+
+                                                            |
+                                                            v
+                          +------------------+     +-------------------+
+                          |   Ready to Run   | <-- |   Create Model    |
+                          |   in Playground  |     |   & Repository    |
+                          +------------------+     +-------------------+
+```
+
+## After Import
+
+Once converted, your model:
+
+- **Opens in Design Mode** - Review and edit the model structure
+- **Has a GitHub Repository** - Version control is automatically set up
+- **Can be Simulated** - Switch to Run Mode to execute simulations
+- **Supports Collaboration** - Share and collaborate with team members
+
+## Troubleshooting
+
+### Invalid XMILE File Error
+
+The file must contain valid XMILE XML with either:
+- A `<xmile>` root element, or
+- A `<model>` element
+
+Ensure your source tool exports in XMILE format, not a proprietary binary format.
+
+### Unsupported Functions
+
+If your model uses functions not in the supported list, they may need manual adjustment after import. The conversion will preserve the original equation text for review.
+
+### Complex Module Structures
+
+Models with deeply nested modules are supported but may require verification after import. Check the stock-flow diagram in the Model Playground to confirm connections are correct.
+
+## XMILE Standard Reference
+
+For technical details about the XMILE format, see the official OASIS specification:
+[XMILE v1.0 Specification](http://docs.oasis-open.org/xmile/xmile/v1.0/xmile-v1.0.html)

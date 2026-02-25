@@ -18,34 +18,46 @@
             "pages": ["index", "quickstart"]
           },
           {
-            "group": "Features",
+            "group": "Platform Features",
             "pages": [
               "features/projects",
-              "features/model-playground", 
-              "features/running-models-locally",
+              "features/library",
+              "features/model-playground",
+              "features/activities",
+              "features/ai-assistant",
+              "features/tutorials",
+              "features/collaboration"
+            ]
+          },
+          {
+            "group": "Simulation Components",
+            "pages": [
               "features/simulation",
-              "features/collaboration",
-              "features/lms-integration"
+              "components/model-controls",
+              "components/charts",
+              "components/stock-flow-diagrams"
             ]
           },
           {
             "group": "Tools",
             "pages": [
-              "tools/behavior-analysis"
+              "tools/behavior-analysis",
+              "tools/xmile-conversion"
             ]
           },
           {
-            "group": "Components",
+            "group": "Integrations",
             "pages": [
-              "components/model-controls",
-              "components/charts",
-              "components/stock-flow-diagrams"
+              "features/lms-integration",
+              "features/google-sheets-live-bridge",
+              "mcp-integration-guide"
             ]
-          }
-        ,
+          },
           {
-            "group": "AI & Agents",
-            "pages": ["mcp-integration-guide"]
+            "group": "Development",
+            "pages": [
+              "features/running-models-locally"
+            ]
           }
         ]
       },

@@ -1,0 +1,113 @@
+---
+title: "Model Library"
+description: "Browse and discover public system dynamics models"
+icon: "book-open"
+---
+
+## Overview
+
+The Model Library is a curated collection of public system dynamics models shared by the Veydra community. Browse ready-to-use models across various domains, learn from expert implementations, and use them as starting points for your own projects.
+
+<Card title="Explore the Library" icon="compass" href="https://app.veydra.io/library">
+  Browse public models at app.veydra.io/library
+</Card>
+
+## Browsing Models
+
+### Search and Filter
+
+Find models quickly using:
+
+- **Search** - Find models by title, description, or tags
+- **Category Filter** - Filter by domain (business, education, science, etc.)
+- **Complexity Level** - Beginner, intermediate, or advanced
+- **Access Level** - Public or template models
+
+### View Modes
+
+Switch between **Grid** and **List** views depending on your preference:
+
+- **Grid View** - Visual cards with thumbnails and quick info
+- **List View** - Detailed rows with more metadata visible
+
+### Sorting Options
+
+Sort results by:
+
+| Sort Option | Description |
+|-------------|-------------|
+| Recent | Most recently updated models first |
+| Popular | Most viewed models |
+| Alphabetical | A-Z by title |
+
+## Using Library Models
+
+When you find a model you want to use:
+
+1. Click on the model card to open it
+2. The model opens in its default mode (typically Run Mode)
+3. Interact with the simulation to explore its behavior
+4. **Fork** the model to create your own copy for editing
+
+<Info>
+Forking a model creates a copy in your own project that you can modify without affecting the original.
+</Info>
+
+## Publishing to the Library
+
+Share your models with the community by publishing them to the library.
+
+### Requirements
+
+Before publishing, ensure your model:
+
+- Has a clear **title** and **description**
+- Is in **Published** state
+- Works correctly in Run Mode
+- Has appropriate **tags** for discoverability
+
+### How to Publish
+
+1. Open your model's **Settings**
+2. Navigate to **Visibility** options
+3. Enable **Include in Public Library**
+4. Save your changes
+
+```
+Model Settings → Visibility → Include in Public Library ✓
+```
+
+### Best Practices
+
+- Write a descriptive title that explains what the model does
+- Add a comprehensive description with use cases
+- Tag your model with relevant keywords
+- Test thoroughly before publishing
+- Consider adding documentation within the model
+
+## Model Categories
+
+| Category | Description |
+|----------|-------------|
+| Business | Supply chains, marketing, operations, strategy |
+| Economics | Markets, policy, macroeconomics |
+| Education | Learning models, classroom demonstrations |
+| Environment | Climate, ecology, sustainability |
+| Healthcare | Epidemiology, health systems, patient flow |
+| Science | Physics, biology, chemistry simulations |
+| Social | Population dynamics, social systems |
+
+## API Access
+
+Query library models programmatically:
+
+```bash
+curl -X GET "https://api.veydra.io/v1/model?includeInLibrary=true&limit=50" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+Response includes model metadata, descriptions, and access information.
+
+## Guest Access
+
+The library supports guest browsing—you can explore models without creating an account. To interact with simulations or fork models, sign in with your Veydra account.

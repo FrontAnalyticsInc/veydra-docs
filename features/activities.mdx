@@ -1,0 +1,268 @@
+---
+title: 'Activities'
+description: 'Transform your models into interactive games, assessments, and guided explorations'
+---
+
+## Overview
+
+Activities transform your system dynamics models into engaging interactive experiences. Instead of simply experimenting with parameters, users step through a structured sequence of decisions, seeing how their choices affect outcomes in real-time.
+
+Activities are ideal for:
+- **Educational games** — Students make decisions and compete for the best outcome
+- **Assessments** — Test understanding by having learners optimize a system  
+- **Executive simulations** — Decision-makers experience consequences of strategic choices
+- **Guided explorations** — Walk users through a model step-by-step
+
+<Frame caption="Activity mode provides a focused game-like experience with step tracking and scoring">
+  <img src="/images/activity-game-mode.png" alt="Activity Game Mode Interface" />
+</Frame>
+
+## Key Concepts
+
+### Steps and Turns
+
+Activities are divided into discrete **steps** (or turns). At each step:
+
+1. The player reviews the current state of the simulation
+2. They adjust available parameters (sliders) to make decisions
+3. They click **Commit & Advance** to lock in their choices  
+4. The simulation runs forward by the configured time increment
+5. Results are displayed, and the next step begins
+
+This turn-based structure creates a game-like experience where every decision matters.
+
+### Objectives and Scoring
+
+Activities can include an optional **objective** that gives players a goal to work toward:
+
+| Objective Type | Description | Example |
+|----------------|-------------|---------|
+| **Reach** | Hit a specific target value | "Reach 1,000,000 customers" |
+| **Maximize** | Get the highest possible value | "Maximize profit by end of game" |
+| **Minimize** | Get the lowest possible value | "Minimize carbon emissions" |
+
+Players earn points based on their progress toward the objective. The score is displayed in real-time during gameplay.
+
+### Parameter Visibility
+
+Model creators control which parameters are visible during an activity:
+
+- **Visible parameters** — The levers players can adjust
+- **Locked parameters** — Hidden or fixed values that simplify the experience
+
+This allows you to create focused experiences by hiding complexity that isn't relevant to the learning objective.
+
+## Creating Activities
+
+Activities are created and managed from the **Model Settings** page, in the **Activities (Game Mode)** section.
+
+### Step 1: Open Model Settings
+
+1. Navigate to your model in the Model Playground
+2. Click the **gear icon** or go to Settings from the model menu
+3. Scroll to the **Activities (Game Mode)** section
+
+### Step 2: Create a New Activity
+
+Click **Create Activity** to open the activity editor:
+
+<Steps>
+  <Step title="Enter Basic Information">
+    - **Activity Title** — A descriptive name (e.g., "Supply Chain Challenge")
+    - **Description** — What users will learn or accomplish
+  </Step>
+  
+  <Step title="Configure Steps">
+    - **Number of Steps** — How many rounds/turns to play (default: 10)
+    - **Time per Step** — Simulation time units per step (default: 1)
+    
+    For example, 12 steps with time per step of 1 month creates a year-long game.
+  </Step>
+  
+  <Step title="Set an Objective (Optional)">
+    - **Target Variable** — The model variable to track (exact name from your model)
+    - **Objective Type** — Reach, Maximize, or Minimize
+    - **Target Value** — For "Reach" objectives, the value to achieve
+  </Step>
+  
+  <Step title="Save">
+    Click **Create Activity** to save your configuration.
+  </Step>
+</Steps>
+
+### Example: Creating a Business Growth Game
+
+Let's create an activity for a business model where players try to reach 1 million in revenue:
+
+| Setting | Value |
+|---------|-------|
+| Title | "Growth Challenge" |
+| Description | "Grow your startup to $1M revenue in 2 years" |
+| Number of Steps | 24 |
+| Time per Step | 1 (month) |
+| Target Variable | "Revenue" |
+| Objective Type | Reach |
+| Target Value | 1000000 |
+
+## Managing Activities
+
+### Editing Activities
+
+1. In the Activities section, find the activity you want to modify
+2. Click the **three-dot menu** (⋮) on the activity card
+3. Select **Edit**
+4. Make your changes and click **Update Activity**
+
+### Deleting Activities
+
+1. Click the **three-dot menu** (⋮) on the activity card
+2. Select **Delete**
+3. Confirm the deletion
+
+<Warning>
+  Deleting an activity cannot be undone. Any shared links to the activity will stop working.
+</Warning>
+
+## Playing Activities
+
+### Starting a Game
+
+There are several ways to access an activity:
+
+1. **From Model Settings** — Click **Play Activity** in the activity's dropdown menu
+2. **Direct URL** — Share the activity link: `app.veydra.io/model/{modelId}/activity/{activityId}`
+3. **From the Model** — If activities exist, users can access them from the model menu
+
+### The Game Interface
+
+When playing an activity, you'll see a specialized interface:
+
+<CardGroup cols={2}>
+  <Card title="Activity Header" icon="gamepad">
+    Shows the activity title, current step (e.g., "Step 3 of 12"), score, and objective progress
+  </Card>
+  <Card title="Game Controls" icon="sliders">
+    Parameter sliders filtered to only show the controls relevant to the activity
+  </Card>
+  <Card title="Visualization" icon="chart-area">
+    Charts showing how the simulation evolves with each step
+  </Card>
+  <Card title="Commit Button" icon="forward">
+    Lock in your decisions and advance to the next step
+  </Card>
+</CardGroup>
+
+### Making Decisions
+
+At each step:
+
+1. **Review** the current simulation state in the charts
+2. **Adjust** the parameter sliders to make your decisions
+3. **Commit & Advance** to lock in choices and run the simulation forward
+4. **Observe** how your decisions affected the outcome
+5. **Repeat** until all steps are complete
+
+### Game Completion
+
+When you complete all steps, you'll see:
+- Your final score
+- Whether you achieved the objective
+- A summary of your performance
+
+<Tip>
+  Want to try different strategies? Start a new game session and approach the challenge differently.
+</Tip>
+
+## Sharing Activities
+
+### Direct Links
+
+Each activity has a unique URL that can be shared:
+
+```
+https://app.veydra.io/model/{modelId}/activity/{activityId}
+```
+
+Users who click this link will immediately enter the activity in game mode.
+
+### LMS Integration
+
+Activities work seamlessly with LTI-enabled Learning Management Systems:
+
+1. Configure the LTI connection in your LMS
+2. Use the activity URL as the launch target
+3. Students access the game directly from their course
+
+See [LMS Integration](/features/lms-integration) for setup details.
+
+## Best Practices
+
+### Designing Effective Activities
+
+<AccordionGroup>
+  <Accordion title="Keep it focused">
+    Limit visible parameters to 3-5 key decisions. Too many controls overwhelm players and dilute learning objectives.
+  </Accordion>
+  
+  <Accordion title="Choose meaningful objectives">
+    Select objectives that connect to real-world outcomes players care about — revenue, health metrics, environmental impact, etc.
+  </Accordion>
+  
+  <Accordion title="Balance difficulty">
+    Set targets that are achievable but challenging. Too easy feels trivial; too hard feels unfair.
+  </Accordion>
+  
+  <Accordion title="Test your activity">
+    Play through your activity yourself before sharing. Make sure the pace feels right and the objective is reachable.
+  </Accordion>
+</AccordionGroup>
+
+### Activity Duration Guidelines
+
+| Use Case | Recommended Steps | Time per Step |
+|----------|-------------------|---------------|
+| Quick demo | 5-10 | 1 |
+| Classroom exercise | 12-20 | Varies |
+| Executive simulation | 10-15 | Quarter or Month |
+| Deep exploration | 20-30 | Varies |
+
+## Technical Notes
+
+### Session Management
+
+- Each play-through creates a new **game session**
+- Sessions track: current step, world state, score, and player decisions
+- Sessions cannot currently be saved/resumed — complete in one sitting
+
+### Model Versioning
+
+Activities always use the **latest published version** of the model. If you update your model:
+
+- Existing activities automatically use the new version
+- Ensure parameter names remain consistent to avoid breaking activities
+
+<Note>
+  Future releases will add support for saving/resuming sessions and activity versioning.
+</Note>
+
+## Troubleshooting
+
+### "Target variable not found"
+
+The objective variable name must exactly match a variable in your model. Check:
+- Capitalization matches exactly
+- No extra spaces
+- The variable exists in the model output
+
+### Activity not showing objectives
+
+Make sure you:
+1. Entered a target variable name
+2. Selected an objective type
+3. Saved the activity
+
+### Charts not updating
+
+After advancing a step, charts should update automatically. If not:
+- Check your browser console for errors
+- Refresh the page and start a new session
