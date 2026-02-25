@@ -123,28 +123,43 @@ This step happens inside your LMS admin panel. The exact steps vary by platform 
     3. Choose **Enter URL** and paste Veydra's **Dynamic Registration URL** (shown in Veydra's LTI Integrations page)
     4. Click **Save** — Canvas auto-fills most settings from the URL
 
-    **Step 2: Configure Placements (Enable Deep Linking)**
+    **Step 2: Configure Privacy & User Data (Required)**
     1. Click **Edit** on the newly created key
-    2. Set **Privacy Level** to **Public** (required for Veydra to receive user name and email)
-    3. Scroll to **Placements** and add at least one:
+    2. Expand **Additional Settings** and configure:
+       - Set **Privacy Level** to **Public** (enables sharing of user names and email addresses)
+       - In the **Custom Fields** box, paste the following lines to explicitly map user data:
+         ```
+         email=$Person.email.primary
+         name=$Person.name.full
+         given_name=$Person.name.given
+         family_name=$Person.name.family
+         ```
+    3. Expand **LTI Advantage Services** and enable:
+       - "Can retrieve user data associated with the context the tool is installed in"
+       - *(Optional for grades)* "Can create and view assignment data in the gradebook associated with the tool"
+       - *(Optional for grades)* "Can create and update submission results for assignments associated with the tool"
+
+    <Note>
+      Veydra requires user email to create accounts. Without the Privacy Level set to Public and Custom Fields configured, students will see an error when launching.
+    </Note>
+
+    **Step 3: Configure Placements (Enable Deep Linking)**
+    1. Scroll to **Placements** and add at least one:
        - **Link Selection** — allows instructors to select Veydra content when adding module items
        - **Assignment Selection** — allows instructors to select Veydra content when creating assignments
-    4. For each placement, set:
+    2. For each placement, set:
        - **Target Link URI**: `https://api.veydra.io/lti/launch`
        - **Message Type**: `LtiDeepLinkingRequest`
        - *(Optional)* **Icon URL**: `https://app.veydra.io/favicon.png`
-    5. *(Optional)* For grade passback, scroll to **LTI Advantage Services** and enable:
-       - "Can create and view assignment data in the gradebook associated with the tool"
-       - "Can create and update submission results for assignments associated with the tool"
-    6. Click **Save**
+    3. Click **Save**
 
-    **Step 3: Enable and Install**
+    **Step 4: Enable and Install**
     1. Toggle the key's **State** to **ON**
     2. Copy the **Client ID** (long number like `10000000000123`)
     3. Go to your **Course → Settings → Apps → + App**
     4. Select **By Client ID**, paste the ID, and click **Submit**
 
-    **Step 4: Register in Veydra**
+    **Step 5: Register in Veydra**
     1. Return to Veydra's **Account → LTI Integrations** page
     2. Click **Register Platform**, select **Canvas**, enter your Canvas URL and the Client ID
     3. Click **Register Platform**

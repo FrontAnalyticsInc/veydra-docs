@@ -21,6 +21,7 @@
             "group": "Platform Features",
             "pages": [
               "features/projects",
+              "features/models",
               "features/library",
               "features/model-playground",
               "features/activities",

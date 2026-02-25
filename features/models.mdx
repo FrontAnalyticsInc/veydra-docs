@@ -1,0 +1,115 @@
+---
+title: 'Models'
+description: 'Creating and managing system dynamics models in Veydra'
+---
+
+## Overview
+
+Models are the core building blocks in Veydra. Each model represents a system dynamics simulation that captures the structure and behavior of real-world systems through stocks, flows, and feedback loops.
+
+## Creating a New Model
+
+You can create a new model in several ways:
+
+### From the Dashboard
+
+1. Navigate to your **Dashboard**
+2. Click **+ New Project** to create a new project with a model
+3. Configure your model settings and click **Create**
+
+### From an Existing Project
+
+1. Open your project from the Dashboard
+2. In the **Models & Activities** section, click **+ New Model**
+3. Your new model will be added to the existing project
+
+<Tip>
+Creating models within an existing project helps organize related simulations and share team access.
+</Tip>
+
+### From the Library
+
+1. Browse the **Model Library** for existing models
+2. Click **Fork** on any public model
+3. A copy will be created in your workspace that you can modify
+
+## Model Components
+
+Every model consists of several key elements:
+
+<CardGroup cols={2}>
+  <Card title="Stocks" icon="database">
+    Accumulations that represent the state of your system (e.g., Population, Inventory, Capital)
+  </Card>
+  <Card title="Flows" icon="arrow-right">
+    Rates of change that increase or decrease stocks over time
+  </Card>
+  <Card title="Parameters" icon="sliders">
+    Constants and coefficients that control model behavior
+  </Card>
+  <Card title="Auxiliaries" icon="calculator">
+    Calculated variables that depend on stocks and parameters
+  </Card>
+</CardGroup>
+
+## Model Settings
+
+Access model settings by clicking the **Settings** button next to any model:
+
+### General Settings
+
+- **Title**: Display name for your model
+- **Description**: Brief explanation of what the model represents
+- **Visibility**: Control who can view and access your model
+- **Current Mode**: Set the default mode when opening the model
+
+### Simulation Settings
+
+- **Time Horizon**: How far into the future to simulate
+- **Time Step (DT)**: Granularity of calculations
+- **Integration Method**: Euler or Runge-Kutta
+
+### Activities
+
+Models can have multiple **Activities** attached to them. Activities provide interactive scenarios where users can manipulate parameters and compete to achieve goals. See [Activities](/features/activities) for more details.
+
+## Model Workflow
+
+<Steps>
+  <Step title="Design">
+    Build your model structure in [Design Mode](/features/model-playground#design-mode) using the stock-flow diagram editor and code panel
+  </Step>
+  <Step title="Test">
+    Run simulations in [Experiment Mode](/features/model-playground#experiment-mode) to verify behavior matches expectations
+  </Step>
+  <Step title="Calibrate">
+    Fine-tune parameters to match real-world data using built-in calibration tools
+  </Step>
+  <Step title="Share">
+    Publish your model to the library or share directly with collaborators
+  </Step>
+</Steps>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="tag" title="Use Descriptive Names">
+    Name your stocks, flows, and parameters clearly. Future you (and your collaborators) will thank you.
+  </Accordion>
+  <Accordion icon="file-lines" title="Document Your Assumptions">
+    Use the model description and comments to explain key assumptions and data sources.
+  </Accordion>
+  <Accordion icon="code-branch" title="Version Your Work">
+    Create new model versions when making significant changes to preserve previous states.
+  </Accordion>
+  <Accordion icon="users" title="Test with Others">
+    Share your model with colleagues to catch errors and improve clarity.
+  </Accordion>
+</AccordionGroup>
+
+## Related Resources
+
+- [Model Playground](/features/model-playground) - Interactive modeling environment
+- [Activities](/features/activities) - Create interactive scenarios
+- [Projects](/features/projects) - Organize models into projects
+- [Collaboration](/features/collaboration) - Team sharing and permissions
