@@ -28,11 +28,22 @@ VMS models consist of:
 
 - **Submodels**: Independent modules that inherit from `Submodel` base class
 - **VARIABLES Dictionary**: Module-level declaration of all model variables
-- **SimulationContext**: Runtime context for accessing stocks and parameters
+- **SimulationContext**: Runtime context for accessing stocks, parameters, and intervention gating
 - **Calculation Functions**: Module-level functions for complex computations
+- **Multi-Scenario Execution**: `run_multi_scenario()` runs baseline + N scenarios in a single call
+- **Output Helpers**: Summary tables, stacked tables, and time-window filtering
 
 ```python
-from veydra_model_standard import Submodel, VeydraModelStandard, SimulationContext
+from veydra_model_standard import (
+    Submodel,
+    VeydraModelStandard,
+    SimulationContext,
+    META_KEYS,
+    compute_summary_stats,
+    build_summary_table,
+    build_stacked_table,
+    apply_time_window,
+)
 import numpy as np
 ```
 
@@ -407,6 +418,377 @@ class BudgetSubmodel(Submodel):
         return derivatives, flows
 ```
 
+## Multi-Scenario Execution
+
+`VeydraModelStandard.run_multi_scenario()` runs one or many scenarios in a single call with shared simulation parameters and calibration.
+
+### Input Config Shape
+
+```python
+config = {
+    # ── Control ──────────────────────────────────────────────
+    "include_baseline": True,           # Run a pure-defaults baseline (default: False)
+
+    # ── Shared simulation params ─────────────────────────────
+    "simulation.duration": 104,
+    "simulation.intervention_start_time": 52,
+
+    # ── Meta-keys (stripped before parameter resolution) ─────
+    "__calibration_params__": {          # Pre-intervention overrides
+        "retail.order_quantity": 600
+    },
+    "__initial_state__": {               # Stock overrides at t=0 (game-mode warm-start)
+        "retail.s_inventory_on_hand": 500
+    },
+    "__time_window__": {                 # Filter output to a time range
+        "start": 10, "end": 80
+    },
+    "__output_format__": "full",         # "full" | "summary" | "stacked" | "all"
+    "__summary_stats__": ["final_value", "peak", "mean"],
+    "__summary_variable__": "retail.s_inventory_on_hand",
+
+    # ── Scenario list ────────────────────────────────────────
+    "scenarios": [
+        {"id": "high_qty", "params": {"retail.order_quantity": 1000}},
+        {"id": "low_qty",  "params": {"retail.order_quantity": 200}},
+    ]
+}
+
+result = model.run_multi_scenario(config)
+```
+
+### How It Works
+
+<Steps>
+  <Step title="Extract meta-keys">
+    `include_baseline`, `__calibration_params__`, `__initial_state__`, `__time_window__`, `__output_format__`, `__summary_stats__`, `__summary_variable__`, and `scenarios` are pulled out of the config before parameter resolution. They never reach the ODE solver.
+  </Step>
+  <Step title="Run baseline (if requested)">
+    When `include_baseline` is `true`, a run is executed with only the shared simulation params plus calibration values. No intervention gating is applied (there are no scenario overrides to gate).
+  </Step>
+  <Step title="Run each scenario">
+    For every entry in `scenarios`, the simulation params are merged with that scenario's `params`. If `simulation.intervention_start_time` is set, the scenario override keys are gated so they only take effect after that time (see Intervention Gating below).
+  </Step>
+  <Step title="Format output">
+    Results are assembled in the requested `__output_format__` and returned.
+  </Step>
+</Steps>
+
+### Implicit Current Scenario
+
+If no `scenarios` list is provided but there are non-simulation override keys in the config, they are automatically bundled into a single scenario with id `"current"`:
+
+```python
+# These two calls are equivalent:
+model.run_multi_scenario({"retail.order_quantity": 800})
+model.run_multi_scenario({"scenarios": [{"id": "current", "params": {"retail.order_quantity": 800}}]})
+```
+
+### Auto-Detection in run_interactive_simulation
+
+`run_interactive_simulation()` automatically routes to `run_multi_scenario()` when any of these keys are present: `scenarios`, `include_baseline`, or `__output_format__`. Otherwise it falls through to a plain `run_simulation()` call for full backward compatibility.
+
+```python
+# Single run (backward compatible)
+run_interactive_simulation(model, {"retail.order_quantity": 800})
+
+# Multi-scenario (auto-detected)
+run_interactive_simulation(model, {
+    "include_baseline": True,
+    "scenarios": [{"id": "s1", "params": {"retail.order_quantity": 800}}]
+})
+```
+
+## Intervention Gating
+
+`SimulationContext.get_param()` natively supports intervention gating. When a scenario is run with `simulation.intervention_start_time` set, scenario override parameters return their **default (or calibration) value** before the intervention time, and the **scenario value** after it.
+
+This eliminates the need for any external monkey-patching or runtime code injection.
+
+### Priority Order
+
+`get_param(key)` resolves values in this order:
+
+1. **Intervention gating** - if `current_time < intervention_start_time` and `key` is a scenario override, return calibration value (or model default)
+2. **Dynamic parameters** - if the value is a `__dynamic__` spec, resolve it to a scalar at `current_time`
+3. **Plain scalar** - return the value from `all_params` directly
+
+```python
+# SimulationContext is constructed with gating context automatically
+# by the orchestrator during run_multi_scenario(). Submodels don't need
+# to do anything special — sim_context.get_param() handles it.
+
+# Before intervention_start_time:
+sim_context.get_param('retail.order_quantity')  # → calibration value or default
+
+# After intervention_start_time:
+sim_context.get_param('retail.order_quantity')  # → scenario override value
+```
+
+### SimulationContext Constructor
+
+```python
+SimulationContext(
+    current_time=t,
+    current_datetime=current_datetime,
+    all_params=params,
+    all_stocks=stocks,
+    intervention_active=False,
+    # Optional gating fields (set automatically by run_multi_scenario):
+    intervention_start_time=52.0,
+    scenario_param_keys={'retail.order_quantity'},
+    calibration_params={'retail.order_quantity': 600},
+    param_defaults={'retail.order_quantity': 500},
+)
+```
+
+<Note>
+  Submodel code does not change at all. The gating is handled entirely inside `get_param()`, so existing `sim_context.get_param('retail.order_quantity')` calls work with or without gating enabled.
+</Note>
+
+## Dynamic (Time-Varying) Parameters
+
+Parameters can be time-varying instead of scalar. Dynamic parameters are dicts with `__dynamic__: true` and are resolved to a scalar at `current_time` by `SimulationContext.get_param()`.
+
+### Modes
+
+| Mode | Description | Required Fields |
+|------|-------------|------------------|
+| `function` | Evaluates a math expression at each time step | `expression` (string) |
+| `array` | Linearly interpolates a lookup table | `points` (list of `[time, value]`) |
+| `drawn` | Interpolates user-drawn curve points | `points` (list of `[time, value]`) |
+
+### Example
+
+```python
+params = {
+    # Static parameter
+    'retail.order_quantity': 500,
+
+    # Dynamic parameter — function mode
+    'retail.demand_rate': {
+        '__dynamic__': True,
+        'mode': 'function',
+        'expression': 'sin(t * 0.1) * 50 + 200',
+        'defaultValue': 200.0
+    },
+
+    # Dynamic parameter — array mode
+    'retail.seasonal_factor': {
+        '__dynamic__': True,
+        'mode': 'array',
+        'points': [[0, 1.0], [26, 1.5], [52, 1.0], [78, 0.8], [104, 1.0]],
+        'defaultValue': 1.0
+    }
+}
+```
+
+Available math functions in expressions: `sin`, `cos`, `tan`, `exp`, `log`, `sqrt`, `abs`, `min`, `max`, `pow`, `floor`, `ceil`, `pi`, `e`. The variable `t` represents `current_time`.
+
+<Warning>
+  Dynamic parameter specs are preserved through `_clean_params()` and `_resolve_parameters()` — they bypass scalar validation (min/max clamping) since their value changes over time.
+</Warning>
+
+## Output Formats
+
+The `__output_format__` meta-key controls how `run_multi_scenario()` returns results.
+
+### `"full"` (default)
+
+Returns the complete time-series for every scenario:
+
+```python
+{
+    "success": True,
+    "scenarios": {
+        "baseline": {"success": True, "time": [...], "stocks": {...}, "flows": {...}},
+        "high_qty": {"success": True, "time": [...], "stocks": {...}, "flows": {...}}
+    }
+}
+```
+
+### `"summary"`
+
+Returns a compact table with one row per scenario and configurable summary statistics:
+
+```python
+{
+    "success": True,
+    "summary": {
+        "columns": ["scenario_id", "final_value", "peak", "min", "mean", "growth_pct"],
+        "rows": [
+            ["baseline", 450.2, 520.1, 380.0, 455.3, 12.5],
+            ["high_qty", 680.9, 710.0, 400.0, 590.1, 36.2]
+        ],
+        "primary_stock": "retail.s_inventory_on_hand"
+    }
+}
+```
+
+Customize with `__summary_stats__` (list of stat names) and `__summary_variable__` (which stock to summarize).
+
+**Available stats:** `final_value`, `peak`, `min`, `mean`, `growth_pct`, `variance`, `time_to_peak`
+
+### `"stacked"`
+
+Returns a long-format table suitable for charting in Google Sheets:
+
+```python
+{
+    "success": True,
+    "stacked": {
+        "columns": ["scenario_id", "time", "variable", "value"],
+        "rows": [
+            ["baseline", 0, "s_inventory_on_hand", 500.0],
+            ["baseline", 0, "s_inventory_on_order", 0.0],
+            ["baseline", 1, "s_inventory_on_hand", 485.3],
+            ...
+        ]
+    }
+}
+```
+
+Variable names use shorthand (last segment after `.`) for readability.
+
+### `"all"`
+
+Returns all three formats in a single response: `scenarios`, `summary`, and `stacked`.
+
+## Meta-Keys Reference
+
+Meta-keys are special config keys that control execution behavior. They are stripped from the parameter dict before the ODE solver sees them.
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `include_baseline` | `bool` | `false` | Run a pure-defaults baseline alongside scenarios |
+| `scenarios` | `list` | `[]` | List of `{id, params}` scenario definitions |
+| `__calibration_params__` | `dict` | `{}` | Parameter overrides applied to baseline and used as pre-intervention defaults |
+| `__initial_state__` | `dict` | `{}` | Stock value overrides at t=0 (warm-start / game-mode) |
+| `__time_window__` | `dict` | `null` | `{start, end}` to filter output time range |
+| `__output_format__` | `string` | `"full"` | `"full"`, `"summary"`, `"stacked"`, or `"all"` |
+| `__summary_stats__` | `list` | default set | Which statistics to compute in summary mode |
+| `__summary_variable__` | `string` | first stock | Which stock to summarize |
+
+<Warning>
+  Meta-keys must never collide with actual model parameter names. They are defined in `META_KEYS` frozenset and automatically excluded from `_clean_params()`.
+</Warning>
+
+## Initial State and Game-Mode Stepping
+
+The `__initial_state__` meta-key overrides stock values at t=0, enabling two use cases:
+
+### Warm-Start
+
+Resume a simulation from a previously saved state:
+
+```python
+result = model.run_simulation({
+    'simulation.duration': 52,
+    '__initial_state__': {
+        'retail.s_inventory_on_hand': 450.0,
+        'retail.s_inventory_on_order': 120.0,
+    }
+})
+```
+
+### Game-Mode Stepping
+
+Run the simulation one step at a time (e.g., one week per turn). Each step feeds the final state of the previous step as `__initial_state__` for the next:
+
+```python
+state = {}  # Start with defaults
+step_size = 1  # 1 week per turn
+
+for week in range(52):
+    result = model.run_simulation({
+        'simulation.duration': step_size,
+        '__initial_state__': state,
+        # Player can change params each turn
+        'retail.order_quantity': player_decision,
+    })
+
+    # Capture final stock values as next initial state
+    state = {
+        stock: values[-1]
+        for stock, values in result['stocks'].items()
+    }
+```
+
+<Note>
+  In the frontend, game-mode stepping runs client-side via Pyodide (not server-side). The `__initial_state__` dict is passed in each step call.
+</Note>
+
+## Calibration Parameters
+
+`__calibration_params__` are shared across all scenarios in a `run_multi_scenario()` call. They serve two purposes:
+
+1. **Baseline modification**: Applied directly to the baseline run as regular parameter overrides
+2. **Pre-intervention defaults**: For scenario runs with intervention gating, calibration values are used as the pre-intervention value (taking priority over model defaults)
+
+```python
+result = model.run_multi_scenario({
+    'include_baseline': True,
+    'simulation.duration': 104,
+    'simulation.intervention_start_time': 52,
+    '__calibration_params__': {
+        'retail.order_quantity': 600,  # Calibrated to real-world data
+    },
+    'scenarios': [
+        {'id': 'high', 'params': {'retail.order_quantity': 1000}},
+    ]
+})
+
+# baseline: order_quantity = 600 for the entire run
+# high scenario:
+#   t < 52: order_quantity = 600 (calibration value, via intervention gating)
+#   t >= 52: order_quantity = 1000 (scenario override kicks in)
+```
+
+## Helper Functions
+
+### compute_summary_stats
+
+Compute named statistics for a single time-series:
+
+```python
+from veydra_model_standard import compute_summary_stats
+
+stats = compute_summary_stats([10, 20, 30, 40, 50], ['final_value', 'mean', 'growth_pct'])
+# {'final_value': 50.0, 'mean': 30.0, 'growth_pct': 400.0}
+```
+
+### build_summary_table
+
+One row per scenario with configurable stats:
+
+```python
+from veydra_model_standard import build_summary_table
+
+table = build_summary_table(scenario_results, 'retail.s_inventory_on_hand')
+# {'columns': ['scenario_id', 'final_value', ...], 'rows': [...], 'primary_stock': '...'}
+```
+
+### build_stacked_table
+
+Long-format table for all scenarios (suitable for Google Sheets charting):
+
+```python
+from veydra_model_standard import build_stacked_table
+
+table = build_stacked_table(scenario_results)
+# {'columns': ['scenario_id', 'time', 'variable', 'value'], 'rows': [...]}
+```
+
+### apply_time_window
+
+Filter a single-run result dict to a time range:
+
+```python
+from veydra_model_standard import apply_time_window
+
+filtered = apply_time_window(result, {'start': 10, 'end': 80})
+```
+
 ## Quick Reference Checklist
 
 When writing VMS-compliant models, verify:
@@ -422,4 +804,6 @@ When writing VMS-compliant models, verify:
   <Check>`calculate_derivatives_and_flows()` returns `(derivatives_dict, flows_dict)`</Check>
   <Check>No custom `__init__` or `get_variables()` methods</Check>
   <Check>Descriptions use plain text (no apostrophes or special characters)</Check>
+  <Check>Meta-keys (`include_baseline`, `__calibration_params__`, etc.) never collide with model parameter names</Check>
+  <Check>Dynamic parameters use `__dynamic__: true` with `mode`, `expression` or `points`</Check>
 </CheckGroup>
