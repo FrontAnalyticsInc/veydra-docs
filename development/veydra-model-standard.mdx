@@ -1,0 +1,425 @@
+---
+title: 'Veydra Model Standard (VMS)'
+description: 'Conventions for building system dynamics models that are executable and analyzable'
+---
+
+## Overview
+
+The Veydra Model Standard (VMS) is a set of conventions for building system dynamics models that are both executable and analyzable. VMS-compliant models enable automatic generation of stock-and-flow diagrams, causal loop diagrams, and other analytical visualizations through AST (Abstract Syntax Tree) parsing.
+
+<CardGroup cols={2}>
+  <Card title="Executable" icon="play">
+    Models run in Python with numerical simulation via SciPy
+  </Card>
+  <Card title="Analyzable" icon="diagram-project">
+    AST parsing extracts structure for automatic diagram generation
+  </Card>
+  <Card title="Modular" icon="cubes">
+    Independent submodels can be composed into larger systems
+  </Card>
+  <Card title="Traceable" icon="route">
+    Explicit dependencies enable causal loop analysis
+  </Card>
+</CardGroup>
+
+## Core Architecture
+
+VMS models consist of:
+
+- **Submodels**: Independent modules that inherit from `Submodel` base class
+- **VARIABLES Dictionary**: Module-level declaration of all model variables
+- **SimulationContext**: Runtime context for accessing stocks and parameters
+- **Calculation Functions**: Module-level functions for complex computations
+
+```python
+from veydra_model_standard import Submodel, VeydraModelStandard, SimulationContext
+import numpy as np
+```
+
+## Submodel Structure
+
+Every submodel follows this structure:
+
+```python
+"""Module docstring describing the submodel's purpose."""
+
+from veydra_model_standard import Submodel
+import numpy as np
+
+# 1. VMS Calculation Functions (optional, for complex logic)
+def calc_something(input1, input2):
+    """Docstring describing the calculation."""
+    return input1 * input2
+
+# 2. VARIABLES dictionary (REQUIRED - module level)
+VARIABLES = {
+    'namespace.s_stock_name': {...},
+    'namespace.parameter_name': {...},
+}
+
+# 3. Submodel class
+class MySubmodel(Submodel):
+    """Class docstring."""
+    
+    def calculate_derivatives_and_flows(self, sim_context):
+        # Implementation
+        return derivatives, flows
+```
+
+<Warning>
+  **Required Rules:**
+  - Do NOT override `__init__` method
+  - Do NOT override `get_variables()` method  
+  - VARIABLES dict MUST be at module level
+  - Only implement `calculate_derivatives_and_flows()`
+</Warning>
+
+## VARIABLES Dictionary
+
+The VARIABLES dictionary declares all model variables at module level.
+
+### Stock Definition
+
+```python
+'budget.s_government_budget': {
+    'name': 'Government Budget',           # Display name
+    'units': 'dollars',                    # Unit of measurement
+    'description': 'Accumulated fund',     # Plain text description
+    'default': 100000.0,                   # Initial value (THIS IS THE INITIAL VALUE)
+    'min': -1000000.0,                     # Minimum allowed
+    'max': 10000000.0,                     # Maximum allowed
+    'type': 'slider',                      # UI control type
+    'category': 'stock'                    # MUST be 'stock'
+}
+```
+
+### Parameter Definition
+
+```python
+'budget.tax_rate': {
+    'name': 'Tax Rate',
+    'units': 'dimensionless',
+    'description': 'Fraction collected as tax',
+    'default': 0.02,
+    'min': 0.0,
+    'max': 0.15,
+    'step': 0.005,                         # Step size for UI
+    'type': 'slider',
+    'category': 'parameter'                # MUST be 'parameter'
+}
+```
+
+### Naming Conventions
+
+| Type | Prefix/Suffix | Example |
+|------|---------------|---------|
+| Stock | `s_` prefix | `budget.s_government_budget` |
+| Parameter | none | `budget.tax_rate` |
+| Flow | `_flow` suffix | `budget.tax_revenue_flow` |
+
+<Note>
+  **Critical Rule**: The `default` field in a stock definition **IS** the initial value. Never create separate `initial_*` parameters.
+</Note>
+
+```python
+# ❌ WRONG - Don't do this
+'population.initial_population': {'default': 1000000, ...}  # FORBIDDEN
+
+# ✅ CORRECT - Stock default IS the initial value
+'population.s_population': {'default': 1000000, ...}  # default = initial value
+```
+
+## Stock-and-Flow Modeling
+
+### Separate Flows by Direction
+
+Each parameter affecting a stock must have its own distinct flow. Never collapse flows.
+
+<Tabs>
+  <Tab title="✅ Correct">
+```python
+# Separate flows preserve directionality
+deposit_flow = periodic_deposit_amount
+withdrawal_flow = periodic_withdrawal_amount
+interest_flow = balance * interest_rate
+
+d_balance_dt = deposit_flow - withdrawal_flow + interest_flow
+
+flows = {
+    'account.deposit_flow': deposit_flow,
+    'account.withdrawal_flow': withdrawal_flow,
+    'account.interest_flow': interest_flow
+}
+```
+  </Tab>
+  <Tab title="❌ Wrong">
+```python
+# Flow collapsing loses directionality
+net_flow = deposit_amount - withdrawal_amount  # Lost individual visibility!
+d_balance_dt = net_flow + interest_flow
+
+flows = {
+    'account.net_flow': net_flow  # Can't trace individual impacts
+}
+```
+  </Tab>
+</Tabs>
+
+### Why This Matters
+
+- Individual flows enable proper stock-and-flow diagram generation
+- Collapsed flows obscure causal relationships
+- AST parser cannot trace through intermediate "net" variables
+
+## Direct Flow Reference Rule
+
+**Derivatives MUST directly reference the same variable names that appear in the flows dictionary.**
+
+This enables the AST parser to trace stock-flow relationships for automatic diagram generation.
+
+```python
+# Step 1: Define flow variables
+government_tax_revenue_flow = tax_revenue
+government_spending_flow = spending
+
+# Step 2: Derivative DIRECTLY references flow variable names
+d_government_budget_dt = government_tax_revenue_flow - government_spending_flow
+
+# Step 3: flows dict uses the SAME variable names
+flows = {
+    'budget.government_tax_revenue_flow': government_tax_revenue_flow,  # ✅ Same name
+    'budget.government_spending_flow': government_spending_flow         # ✅ Same name
+}
+```
+
+<Warning>
+  **Common Mistakes:**
+  - Using different variable names in derivative vs flows dict
+  - Using intermediate "net" variables that hide individual flows
+</Warning>
+
+## Calculation Function Convention
+
+For complex intermediate calculations (conditionals, aggregations, multi-step computations), define module-level calculation functions where **ALL dependencies are explicit in the function signature**.
+
+### Why Use Calculation Functions
+
+The AST parser extracts all function call arguments as dependencies. This makes complex logic fully traceable.
+
+```python
+# AST parser sees: pool_frac_ill depends on all 5 arguments
+pool_frac_ill = calc_pool_frac_ill(insured_pool, insured_healthy, frac_ill_healthy, insured_sickly, frac_ill_sickly)
+```
+
+### Pattern
+
+```python
+# Module-level calculation function with explicit dependencies
+def calc_pool_frac_ill(insured_pool, insured_healthy, frac_ill_healthy, insured_sickly, frac_ill_sickly):
+    """Calculate weighted average fraction ill across insured pool."""
+    if insured_pool > 1.0:
+        return (insured_healthy * frac_ill_healthy + insured_sickly * frac_ill_sickly) / insured_pool
+    return frac_ill_healthy
+
+# In calculate_derivatives_and_flows:
+pool_frac_ill = calc_pool_frac_ill(insured_pool, insured_healthy, frac_ill_healthy, 
+                                    insured_sickly, frac_ill_sickly)
+```
+
+### Function Naming Convention
+
+- Use `calc_` prefix: `calc_pool_frac_ill`, `calc_total_income`, `calc_tax_revenue`
+- Name should describe what is being calculated
+- Keep signatures to 6 or fewer parameters when possible
+
+### When to Use Calculation Functions
+
+| Use Case | Example |
+|----------|---------|
+| Conditional logic | `if pool > 0: ... else: ...` |
+| Weighted averages | `(a * weight_a + b * weight_b) / total` |
+| Multi-step computations | Intermediate results needed |
+| Complex aggregations | Summations with conditions |
+
+## Derivative Patterns
+
+### Dictionary Format (Required)
+
+Always return derivatives as a dictionary mapping stock names to their rates of change:
+
+```python
+derivatives = {
+    'budget.s_government_budget': d_government_budget_dt,
+    'budget.s_private_budget': d_private_budget_dt
+}
+```
+
+<Warning>
+  Never use array format - it's unclear which stock is which:
+  ```python
+  # ❌ WRONG
+  derivatives = [d_government_budget_dt, d_private_budget_dt]
+  ```
+</Warning>
+
+### Derivative Expression Pattern
+
+Build derivatives from individual flows with explicit addition/subtraction:
+
+```python
+# ✅ CORRECT - Explicit inflow/outflow pattern
+d_stock_dt = inflow1 + inflow2 - outflow1 - outflow2
+```
+
+### Accessing Stocks and Parameters
+
+```python
+# ✅ CORRECT - Use getter methods
+stock_value = sim_context.get_stock('namespace.s_stock_name', default_value)
+param_value = sim_context.get_param('namespace.param_name', default_value)
+
+# ❌ WRONG - Direct attribute access
+stock_value = sim_context.stocks['namespace.s_stock_name']  # Don't do this
+param_value = sim_context.params['namespace.param_name']    # Don't do this
+```
+
+## AST Traceability
+
+The VMS conventions enable automatic AST parsing for:
+
+<Steps>
+  <Step title="Stock-Flow Diagram Generation">
+    Automatically creates visual diagrams showing stocks, flows, and their connections
+  </Step>
+  <Step title="Causal Loop Analysis">
+    Traces parameter influences through the model to identify feedback loops
+  </Step>
+  <Step title="Dependency Extraction">
+    Identifies all variable dependencies for each calculation
+  </Step>
+</Steps>
+
+### How AST Parsing Works
+
+1. **Shallow Extraction**: Parser extracts direct variable references from expressions
+2. **Function Arguments**: All arguments to `calc_*` functions are extracted as dependencies
+3. **Flow Dictionary Keys**: Flow names from the flows dict are matched to derivative expressions
+
+| Convention | Enables |
+|------------|---------|
+| Direct Flow Reference | Stock-to-flow connections in diagrams |
+| Calculation Functions | Complete dependency graphs |
+| Separate Flows | Individual causal links |
+| VARIABLES dict | Parameter metadata extraction |
+
+## Complete Example
+
+Here's a complete VMS-compliant submodel:
+
+```python
+"""Budget submodel: government and private sector funding dynamics."""
+
+from veydra_model_standard import Submodel
+import numpy as np
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VMS CALCULATION FUNCTIONS - explicit dependency signatures for AST traceability
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def calc_tax_revenue(total_income, tax_rate):
+    """Calculate government tax revenue from total income."""
+    return total_income * tax_rate
+
+
+def calc_spending(investment_spending, split_fraction):
+    """Calculate spending portion based on split."""
+    return investment_spending * split_fraction
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VARIABLES - module-level declaration (stock defaults ARE initial values)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+VARIABLES = {
+    # Stocks
+    'budget.s_government_budget': {
+        'name': 'Government Budget',
+        'units': 'dollars',
+        'description': 'Accumulated government fund',
+        'default': 100000.0,  # THIS IS THE INITIAL VALUE
+        'min': -1000000.0,
+        'max': 10000000.0,
+        'type': 'slider',
+        'category': 'stock'
+    },
+    
+    # Parameters
+    'budget.tax_rate': {
+        'name': 'Tax Rate',
+        'units': 'dimensionless',
+        'description': 'Fraction collected as healthcare tax',
+        'default': 0.02,
+        'min': 0.0,
+        'max': 0.15,
+        'step': 0.005,
+        'type': 'slider',
+        'category': 'parameter'
+    }
+}
+
+
+class BudgetSubmodel(Submodel):
+    """Government budget dynamics with tax revenue and spending."""
+
+    def calculate_derivatives_and_flows(self, sim_context):
+        # ── Read stocks ───────────────────────────────────────────────────
+        government_budget = sim_context.get_stock('budget.s_government_budget', 100000.0)
+
+        # ── Read parameters ───────────────────────────────────────────────
+        tax_rate = sim_context.get_param('budget.tax_rate', 0.02)
+        
+        # ── Read cross-submodel values ────────────────────────────────────
+        total_income = sim_context.get_param('economy.total_income', 1000000.0)
+        investment_spending = sim_context.get_param('capacity.investment_spending', 50000.0)
+
+        # ── VMS Calculation Functions ─────────────────────────────────────
+        tax_revenue = calc_tax_revenue(total_income, tax_rate)
+        government_spending = calc_spending(investment_spending, 0.5)
+
+        # ── Define flow variables (for direct reference rule) ─────────────
+        tax_revenue_flow = tax_revenue
+        spending_flow = government_spending
+
+        # ── Derivative (directly references flow variable names) ──────────
+        d_government_budget_dt = tax_revenue_flow - spending_flow
+
+        # ── Return dictionaries ───────────────────────────────────────────
+        derivatives = {
+            'budget.s_government_budget': d_government_budget_dt
+        }
+
+        flows = {
+            'budget.tax_revenue_flow': tax_revenue_flow,    # Inflow
+            'budget.spending_flow': spending_flow           # Outflow
+        }
+
+        return derivatives, flows
+```
+
+## Quick Reference Checklist
+
+When writing VMS-compliant models, verify:
+
+<CheckGroup>
+  <Check>VARIABLES dict is at module level</Check>
+  <Check>Stock names use `s_` prefix</Check>
+  <Check>Stock `default` is used for initial value (no separate `initial_*` params)</Check>
+  <Check>All `sim_context.get_param()` calls match VARIABLES entries</Check>
+  <Check>Flows are separate (not collapsed into "net" flows)</Check>
+  <Check>Derivative expressions directly reference flow variable names</Check>
+  <Check>Complex calculations use `calc_*` functions with explicit arguments</Check>
+  <Check>`calculate_derivatives_and_flows()` returns `(derivatives_dict, flows_dict)`</Check>
+  <Check>No custom `__init__` or `get_variables()` methods</Check>
+  <Check>Descriptions use plain text (no apostrophes or special characters)</Check>
+</CheckGroup>

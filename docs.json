@@ -57,7 +57,8 @@
           {
             "group": "Development",
             "pages": [
-              "features/running-models-locally"
+              "features/running-models-locally",
+              "development/veydra-model-standard"
             ]
           }
         ]
