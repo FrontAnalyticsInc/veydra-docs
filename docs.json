@@ -23,11 +23,18 @@
               "features/projects",
               "features/models",
               "features/library",
-              "features/model-playground",
               "features/activities",
               "features/ai-assistant",
               "features/tutorials",
               "features/collaboration"
+            ]
+          },
+          {
+            "group": "Model Playground",
+            "pages": [
+              "playground/overview",
+              "playground/design",
+              "playground/calibration"
             ]
           },
           {
@@ -49,6 +56,7 @@
           {
             "group": "Integrations",
             "pages": [
+              "features/github-integration",
               "features/lms-integration",
               "features/google-sheets-live-bridge",
               "mcp-integration-guide"
@@ -57,7 +65,7 @@
           {
             "group": "Development",
             "pages": [
-              "features/running-models-locally",
+              "development/running-models-locally",
               "development/veydra-model-standard"
             ]
           }

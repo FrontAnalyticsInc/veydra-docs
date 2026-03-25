@@ -1,0 +1,268 @@
+---
+title: 'Running Models Locally'
+description: 'How to clone and run Veydra system dynamics models on your local machine'
+---
+
+## Overview
+
+Every Veydra model is a standalone Python project hosted on GitHub. You can clone any model repository and run it locally with standard Python tooling — no special platform or runtime required. This page walks through the repository structure, setup, execution, and testing workflow that all models follow.
+
+## Quick Start
+
+<Steps>
+  <Step title="Clone the Repository">
+    Each model lives in its own GitHub repo. Clone it to your machine:
+    ```bash
+    git clone <model-repo-url>
+    cd veydra-model-<id>
+    ```
+  </Step>
+  <Step title="Create a Virtual Environment">
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate        # macOS / Linux
+    .\.venv\Scripts\activate         # Windows
+    ```
+  </Step>
+  <Step title="Install Dependencies">
+    ```bash
+    pip install -r requirements.txt
+    ```
+  </Step>
+  <Step title="Run the Model">
+    ```bash
+    python main.py
+    ```
+  </Step>
+</Steps>
+
+## Requirements
+
+<CardGroup cols={2}>
+  <Card title="Python 3.11+" icon="python">
+    A local Python installation. Any recent 3.11+ version works.
+  </Card>
+  <Card title="pip" icon="box">
+    Used to install dependencies from `requirements.txt`.
+  </Card>
+</CardGroup>
+
+### Dependencies
+
+All models declare their dependencies in `requirements.txt`. A typical model requires:
+
+| Package | Purpose |
+|---------|---------|
+| **veydra-model-standard** | Base classes and utilities for VMS-compliant models |
+| **NumPy** | Array computation and mathematical operations |
+| **SciPy** | Scientific computing, ODE solvers, optimization |
+| **pytest** | Running the test suite |
+
+## Repository Structure
+
+Every model repository follows the same layout:
+
+```
+veydra-model-<id>/
+├── main.py                        # CLI entry point
+├── requirements.txt               # Python dependencies
+├── test_main.py                   # pytest test suite (generic VMS tests)
+├── test_model.py                  # Quick smoke tests
+├── src/
+│   ├── model.py                   # Main model orchestrator
+│   ├── veydra_model_standard.py   # VMS base classes (Submodel, SimulationContext, etc.)
+│   ├── <submodel_a>.py            # Domain-specific submodel
+│   ├── <submodel_b>.py            # Domain-specific submodel
+│   └── README.md                  # Model-specific documentation
+└── config/
+    ├── outputs.json               # Which stocks & flows to include in results
+    ├── model-parameters.json      # Full parameter metadata (ranges, units, defaults)
+    ├── presets.json                # Named parameter presets / scenarios
+    └── flow-diagram.json          # Visual layout for the flow diagram
+```
+
+### Key Files
+
+<AccordionGroup>
+  <Accordion title="main.py" icon="play">
+    The command-line entry point. Initializes the model, runs a default simulation, then runs an interactive simulation with the same defaults to validate the full pipeline.
+
+    ```bash
+    python main.py
+    ```
+  </Accordion>
+  <Accordion title="src/model.py" icon="gear">
+    Contains the **master orchestrator** class (inherits from `VeydraModelStandard`) and the two contract functions — `initialize_model()` and `run_interactive_simulation()`. This is where submodels are wired together, derivatives are computed, and the ODE solver is invoked.
+  </Accordion>
+  <Accordion title="config/outputs.json" icon="filter">
+    Controls which stocks and flows are included in simulation results. All variables are computed internally, but only those listed here are returned.
+
+    ```json
+    {
+      "stocks": [
+        "population.s_population",
+        "resource.s_resource_stock"
+      ],
+      "flows": [
+        "population.population_growth_flow",
+        "resource.resource_extraction_flow"
+      ]
+    }
+    ```
+  </Accordion>
+  <Accordion title="config/presets.json" icon="sliders">
+    Defines named scenarios with specific parameter overrides. Each preset has an `id`, a `description`, and a `variables` dict of parameter values.
+  </Accordion>
+  <Accordion title="config/model-parameters.json" icon="list">
+    Full metadata for every parameter: label, min/max, step, default, units, category, and namespace. Generated automatically by the Veydra AST analysis pipeline.
+  </Accordion>
+</AccordionGroup>
+
+## The Model Contract
+
+Every VMS-compliant model exposes two functions from `src/model.py`:
+
+```python
+def initialize_model():
+    """Set up the model and return default results."""
+    # Returns: (model_instance, default_results)
+    ...
+
+def run_interactive_simulation(model_instance, params, return_json=False):
+    """Run the model with the given parameter overrides."""
+    # Returns: dict with 'success', 'stocks', 'flows', 'time', etc.
+    ...
+```
+
+- **`initialize_model()`** — creates the model instance, runs a simulation with default parameters, and returns both the instance and the default results dict.
+- **`run_interactive_simulation()`** — takes an existing model instance and a dict of parameter overrides, re-runs the simulation, and returns updated results. Pass `return_json=True` to get a JSON string instead of a Python dict.
+
+### Results Format
+
+Both functions return a results dictionary with this shape:
+
+```python
+{
+    "success": True,
+    "stocks": {
+        "population.s_population": [1000.0, 1010.2, ...],
+        "resource.s_resource_stock": [10000.0, 9989.8, ...],
+    },
+    "flows": {
+        "population.population_growth_flow": [20.0, 20.1, ...],
+        "resource.resource_extraction_flow": [10.2, 10.1, ...],
+    },
+    "time": [0.0, 0.125, 0.25, ...],
+    "dates": ["2024-01-01", "2024-02-15", ...],
+}
+```
+
+Stock and flow keys use the full namespaced parameter name (`submodel.variable_name`).
+
+## Running Simulations
+
+### Default Run
+
+```bash
+python main.py
+```
+
+This initializes the model with default parameters and prints key outputs to the console.
+
+### Custom Parameters
+
+You can override parameters programmatically by passing a dictionary to `run_interactive_simulation()`:
+
+```python
+from src.model import initialize_model, run_interactive_simulation
+
+model, defaults = initialize_model()
+
+# Override specific parameters
+params = {
+    "population.population_growth_rate": {"value": 0.03},
+    "resource.resource_extraction_rate_per_capita": {"value": 0.05},
+}
+
+results = run_interactive_simulation(model, params)
+print(results["stocks"]["population.s_population"][-1])
+```
+
+### Running Presets
+
+Presets from `config/presets.json` can be loaded and passed directly:
+
+```python
+import json
+from src.model import initialize_model, run_interactive_simulation
+
+model, _ = initialize_model()
+
+with open("config/presets.json") as f:
+    presets = json.load(f)["presetConditions"]
+
+for preset in presets:
+    params = {k: {"value": v} for k, v in preset["variables"].items()}
+    results = run_interactive_simulation(model, params)
+    print(f"{preset['id']}: success={results['success']}")
+```
+
+## Testing
+
+All models ship with two test files:
+
+### Smoke Tests
+
+```bash
+python test_model.py
+```
+
+Runs quick validation: can the model be imported, initialized, and executed?
+
+### Full Test Suite
+
+```bash
+pytest test_main.py -v
+```
+
+Uses pytest to run structured tests including:
+- **Default parameters** — model runs and returns valid numeric results
+- **All presets** — every preset from `config/presets.json` is run and validated automatically
+
+<Tip>
+  The generic `test_main.py` works with any VMS-compliant model — it discovers presets automatically, so you don't need to update tests when adding new scenarios.
+</Tip>
+
+## Model Architecture
+
+### Submodels
+
+Models are decomposed into **submodels** — one per domain (e.g., `population_submodel.py`, `resource_submodel.py`). Each submodel:
+
+1. Defines its own `VARIABLES` dict with parameter metadata
+2. Inherits from the `Submodel` base class in `veydra_model_standard.py`
+3. Implements a `calculate_derivatives_and_flows()` method
+
+The master orchestrator in `src/model.py` wires all submodels together, collects their derivatives, and passes them to SciPy's ODE solver (`solve_ivp`).
+
+### Parameter Namespacing
+
+All parameters use a `submodel.variable_name` naming convention to avoid collisions:
+
+```
+population.population_growth_rate
+resource.resource_extraction_rate_per_capita
+environmental_degradation.waste_generation_rate_per_capita
+simulation.duration
+```
+
+### Simulation Variables
+
+In addition to submodel parameters, every model has a set of `simulation.*` variables controlling execution:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `simulation.duration` | 200 | Total simulation length (years) |
+| `simulation.time_step` | 0.125 | Integration time step (years) |
+| `simulation.start_date` | 2024-01-01 | Calendar start date |
+| `simulation.intervention_start_time` | 100 | When interventions activate (years) |

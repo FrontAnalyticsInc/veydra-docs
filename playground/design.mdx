@@ -1,0 +1,128 @@
+---
+title: 'Design Mode'
+description: 'Build and structure your system dynamics model — edit parameters, initial values, stock-flow diagrams, and code'
+---
+
+## Overview
+
+Design mode is the primary building environment in the Model Playground. This is where you define your model's structure, set initial values, and configure simulation parameters. All changes made in Design mode update the **baseline configuration** — the foundation that every scenario builds on.
+
+<Tip>
+  Changes in Design mode set the baseline for **all** scenarios. Use [Experiment mode](/playground/overview#experiment-mode) for what-if analysis.
+</Tip>
+
+## What You See
+
+When you enter Design mode, the workspace arranges itself for model building:
+
+- **Design Panel (left)** — Full access to all parameter sliders organized by submodel
+- **Stock-Flow Diagram (center)** — Fully expanded diagram editor with Flow, Causal, Params, and Loops tabs
+- **Code Editor (bottom)** — Direct Python code editing with Pyodide execution
+- **Charts are hidden** — Focus stays on model structure, not outputs
+
+## Design Panel
+
+The Design Panel on the left gives you access to every parameter in your model: stocks' initial values, flow rates, auxiliary parameters, and simulation settings.
+
+### Parameter Organization
+
+Parameters are grouped by submodel. Expand a section to see its parameters and adjust values using sliders or direct numeric entry.
+
+<AccordionGroup>
+  <Accordion title="Active Parameters">
+    Parameters that are enabled and will affect the simulation. These appear with full sliders you can adjust.
+  </Accordion>
+  <Accordion title="Inactive Parameters">
+    Parameters that exist in the model but are currently deactivated. You can activate them to include them in your analysis.
+  </Accordion>
+</AccordionGroup>
+
+### Parameter Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Stock Initial Values** | Starting quantities for accumulations | Initial Population = 1000 |
+| **Flow Rates** | Speed of change between stocks | Growth Rate = 0.05 |
+| **Auxiliary Parameters** | Constants and coefficients | Carrying Capacity = 10000 |
+| **Simulation Settings** | Time horizon, step size, method | dt = 0.25, time = 100 |
+
+## Stock-Flow Diagram
+
+The diagram editor is fully visible in Design mode with all tabs available:
+
+<CardGroup cols={2}>
+  <Card title="Flow View" icon="arrows-left-right">
+    The standard stock-and-flow diagram showing accumulations and rates of change
+  </Card>
+  <Card title="Causal View" icon="diagram-project">
+    Causal loop diagram showing feedback relationships between variables
+  </Card>
+  <Card title="Params View" icon="sliders">
+    Parameter influence diagram showing how parameters connect to model behavior
+  </Card>
+  <Card title="Loops View" icon="rotate">
+    Identified feedback loops with reinforcing (R) and balancing (B) labels
+  </Card>
+</CardGroup>
+
+## Code Editor
+
+For advanced users, the Code Editor provides direct access to the underlying Python model code. Models run in the browser using Pyodide — no server required.
+
+### Key Features
+
+- **Syntax highlighting** for Python
+- **Live execution** via Pyodide (WebAssembly Python runtime)
+- **Inline errors** shown directly in the editor
+- **Parameter sync** — Code changes automatically update available sliders
+
+<Warning>
+  Editing model code directly is an advanced operation. Make sure you understand the model structure before modifying equations.
+</Warning>
+
+## Design Workflow
+
+<Steps>
+  <Step title="Review the model structure">
+    Open Design mode and examine the stock-flow diagram to understand relationships between variables.
+  </Step>
+  <Step title="Set initial values">
+    Use the Design Panel to configure starting values for all stocks. These define the system's initial state.
+  </Step>
+  <Step title="Configure parameters">
+    Adjust flow rates and auxiliary parameters to represent the system you're modeling.
+  </Step>
+  <Step title="Set simulation settings">
+    Configure the time horizon, time step (dt), and integration method.
+  </Step>
+  <Step title="Move to Calibrate or Experiment">
+    Once the structure is right, switch to Calibrate mode to match real-world data, or jump straight to Experiment mode for what-if analysis.
+  </Step>
+</Steps>
+
+## Design vs. Other Modes
+
+| | Design Mode | Calibrate Mode | Experiment Mode |
+|---|---|---|---|
+| **Purpose** | Define model structure and baseline | Match model to real-world data | Explore what-if scenarios |
+| **Parameter changes affect** | Baseline (all scenarios) | Baseline (all scenarios) | Current scenario only |
+| **Charts** | Hidden | Visible | Visible |
+| **Stock-Flow Diagram** | Fully expanded | Minimized | Available |
+| **Code Editor** | Available | Hidden | Hidden |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Calibration" icon="flask" href="/playground/calibration">
+    Fine-tune parameters to match real-world data
+  </Card>
+  <Card title="Playground Overview" icon="play" href="/playground/overview">
+    See all playground modes and how they connect
+  </Card>
+  <Card title="Stock-Flow Diagrams" icon="diagram-project" href="/components/stock-flow-diagrams">
+    Learn more about building and reading stock-flow diagrams
+  </Card>
+  <Card title="Model Controls" icon="sliders" href="/components/model-controls">
+    Deep dive into parameter sliders and scenario management
+  </Card>
+</CardGroup>

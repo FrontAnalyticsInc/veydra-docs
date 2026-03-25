@@ -54,14 +54,27 @@ Every model consists of several key elements:
 
 ## Model Settings
 
-Access model settings by clicking the **Settings** button next to any model:
+Model editing is split into two scopes so it is clear what you are configuring:
 
-### General Settings
+### Model-Level Settings
+
+These settings belong to the model entity itself:
 
 - **Title**: Display name for your model
 - **Description**: Brief explanation of what the model represents
-- **Visibility**: Control who can view and access your model
-- **Current Mode**: Set the default mode when opening the model
+- **Model Status**: Lifecycle state for the model (draft, active, completed, archived)
+- **GitHub Integration**: Link or manage the model repository
+- **Activities List**: Create, edit, and manage attached activities
+
+### Default Playground Settings
+
+These settings are edited on the dedicated **Playground Settings** page for a model and control the default playground experience:
+
+- **Default mode** for the model playground
+- **Available modes** in the default playground
+- **Library/discoverability settings** (include in library, access level, complexity, category, tags)
+
+Use these defaults when users open the model playground without selecting a specific activity.
 
 ### Simulation Settings
 
@@ -71,16 +84,18 @@ Access model settings by clicking the **Settings** button next to any model:
 
 ### Activities
 
-Models can have multiple **Activities** attached to them. Activities provide interactive scenarios where users can manipulate parameters and compete to achieve goals. See [Activities](/features/activities) for more details.
+Models can have multiple **Activities** attached to them. Activities provide interactive scenarios where users can manipulate parameters and compete to achieve goals.
+
+Activity statuses are independent from the model lifecycle status. See [Activities](/features/activities) for more details.
 
 ## Model Workflow
 
 <Steps>
   <Step title="Design">
-    Build your model structure in [Design Mode](/features/model-playground#design-mode) using the stock-flow diagram editor and code panel
+    Build your model structure in [Design Mode](/playground/overview#design-mode) using the stock-flow diagram editor and code panel
   </Step>
   <Step title="Test">
-    Run simulations in [Experiment Mode](/features/model-playground#experiment-mode) to verify behavior matches expectations
+    Run simulations in [Experiment Mode](/playground/overview#experiment-mode) to verify behavior matches expectations
   </Step>
   <Step title="Calibrate">
     Fine-tune parameters to match real-world data using built-in calibration tools
@@ -109,7 +124,7 @@ Models can have multiple **Activities** attached to them. Activities provide int
 
 ## Related Resources
 
-- [Model Playground](/features/model-playground) - Interactive modeling environment
+- [Model Playground](/playground/overview) - Interactive modeling environment
 - [Activities](/features/activities) - Create interactive scenarios
 - [Projects](/features/projects) - Organize models into projects
 - [Collaboration](/features/collaboration) - Team sharing and permissions

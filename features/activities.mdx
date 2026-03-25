@@ -4,12 +4,19 @@ description: 'Transform your models into interactive games, assessments, and gui
 ---
 
 <Info>
-  **New to Veydra?** Start with the [Model Playground](/features/model-playground) — Veydra's central workspace where you build, modify, and test your system dynamics models with real-time feedback and powerful visualization tools.
+  **New to Veydra?** Start with the [Model Playground](/playground/overview) — Veydra's central workspace where you build, modify, and test your system dynamics models with real-time feedback and powerful visualization tools.
 </Info>
 
 ## Overview
 
 Activities transform your system dynamics models into engaging interactive experiences. Instead of simply experimenting with parameters, users step through a structured sequence of decisions, seeing how their choices affect outcomes in real-time.
+
+Activities are attached to a model, but they are configured and managed independently from the model lifecycle status.
+
+- **Model status** controls the model lifecycle (draft/active/completed/archived).
+- **Activity status and configuration** control each activity experience.
+- **Default playground settings** apply when no activity is selected.
+- **Activity configuration** can override playground defaults when an activity is opened.
 
 Activities are ideal for:
 - **Educational games** — Students make decisions and compete for the best outcome
@@ -58,13 +65,13 @@ This allows you to create focused experiences by hiding complexity that isn't re
 
 ## Creating Activities
 
-Activities are created and managed from the **Model Settings** page, in the **Activities (Game Mode)** section.
+Activities are created and managed from the model editor page, in the **Activities** section.
 
-### Step 1: Open Model Settings
+### Step 1: Open the Model Editor
 
 1. Navigate to your model in the Model Playground
 2. Click the **gear icon** or go to Settings from the model menu
-3. Scroll to the **Activities (Game Mode)** section
+3. Scroll to the **Activities** section
 
 ### Step 2: Create a New Activity
 

@@ -1,0 +1,171 @@
+---
+title: 'GitHub Integration'
+description: 'Create and link GitHub repositories to your Veydra models for version control and collaboration'
+---
+
+## Overview
+
+The **Veydra GitHub App** connects your Veydra models to GitHub repositories, enabling two-way code synchronization. Each model can be linked to its own repository — you can create a new repo or link an existing one directly from the model's settings page.
+
+<Info>
+  The Veydra GitHub App is available on the [GitHub Marketplace](https://github.com/marketplace/veydra-cloud).
+</Info>
+
+### How It Works
+
+1. Connect your GitHub account from Account Settings (one-time setup)
+2. Every new model you create automatically gets a private GitHub repository
+3. Veydra monitors the linked repo for changes via webhooks
+4. Code edits flow both directions — Veydra to GitHub and GitHub to Veydra
+
+---
+
+## Getting Started
+
+### Step 1: Connect Your GitHub Account
+
+This is a one-time setup to authorize Veydra with your GitHub account.
+
+<Steps>
+  <Step title="Go to Account Settings">
+    In your Veydra dashboard, go to **[Account → Settings](https://veydra.io/account/settings)** and find the **GitHub Integration** card.
+  </Step>
+  <Step title="Click Connect GitHub">
+    Click the **Connect GitHub** button. You'll be redirected to GitHub.
+  </Step>
+  <Step title="Authorize the App">
+    Review the permissions and select **Only select repositories**. GitHub requires at least one repo to be selected — pick any repository (Veydra won't modify it). Click **Install & Authorize**. As you create models, Veydra will add only the repos it creates to the app's access list individually.
+  </Step>
+  <Step title="Return to Veydra">
+    After authorization, you'll be redirected back to Veydra. Your GitHub connection status will show as **Connected**.
+  </Step>
+</Steps>
+
+### Step 2: Create a Model
+
+Once your account is connected, every new model you create will automatically get a private GitHub repository under your account.
+
+You can also manage repos from a model's settings page:
+- **Create New Repo** — Manually create and link a repo for an existing model that doesn't have one.
+- **Link Existing Repo** — Link a different existing repository to a model.
+- **Unlink** — Remove the repo association (does not delete the repo on GitHub).
+
+---
+
+## Features
+
+### Automatic Repository Creation
+
+When you create a new model and your GitHub account is connected, Veydra automatically:
+1. Creates a private repository under your GitHub account (named after your model)
+2. Links it to the model
+3. Initializes it with a README
+
+If you prefer to use an existing repo, you can change this from the model's settings page.
+
+### Per-Model Repositories
+
+Each model gets its own dedicated GitHub repository. This keeps your code organized and makes it easy to manage access and collaboration per model.
+
+### Two-Way Sync
+
+<CardGroup cols={2}>
+  <Card title="Veydra → GitHub" icon="arrow-right">
+    When you edit model code in Veydra's editor, changes are committed and pushed to your linked repository automatically.
+  </Card>
+  <Card title="GitHub → Veydra" icon="arrow-left">
+    When you push commits to your linked repository, Veydra detects the changes and updates your model code accordingly.
+  </Card>
+</CardGroup>
+
+### Unlinking a Repository
+
+You can unlink a repository from a model at any time from the model's settings page by clicking **Unlink**. This removes the association but does not delete the repository on GitHub.
+
+### Loop Prevention
+
+Veydra automatically prevents infinite sync loops. Commits made by Veydra are tagged with `[veydra-sync]` and are ignored by the webhook handler.
+
+---
+
+## Collaboration
+
+GitHub integration works seamlessly with Veydra's project-level collaboration.
+
+| Action | Model Owner | Collaborator |
+|--------|------------|---------------|
+| Edit model in Veydra | ✅ | ✅ (via project RBAC) |
+| Changes sync to GitHub | Via owner's token | Via owner's token |
+| Push directly to GitHub repo | ✅ (their repo) | Needs repo collaborator access |
+| GitHub App installed | ✅ Required | ❌ Not needed |
+
+**Key points:**
+- Only the model owner needs the GitHub App installed.
+- When a collaborator edits a model in Veydra, changes sync to GitHub using the owner's credentials.
+- If a collaborator wants to push code directly on GitHub, the owner must add them as a collaborator on the repo (GitHub → Repo Settings → Collaborators).
+- No forking is required. Everyone works on the same repo.
+
+<Tip>
+  For more on team roles and permissions, see [Collaboration Features](/features/collaboration).
+</Tip>
+
+---
+
+## Permissions
+
+The Veydra GitHub App requests the following permissions:
+
+| Permission | Access | Purpose |
+|---|---|---|
+| **Repository contents** | Read & Write | Read and update model code files |
+| **Metadata** | Read-only | List repositories and basic repo info |
+
+<Info>
+  Veydra only accesses repositories it creates for your models or that you explicitly link. Each repo is added to the app's access list individually. You can review and revoke access to any repo at any time from your [GitHub App settings](https://github.com/settings/installations).
+</Info>
+
+---
+
+## Managing Your Connection
+
+### Check Connection Status
+
+- **Account level**: Go to **[Account → Settings](https://veydra.io/account/settings)** to see if your GitHub account is connected.
+- **Model level**: Open any model's settings and check the **GitHub Repository** card to see if a repo is linked.
+
+### Disconnect GitHub
+
+To remove the Veydra GitHub App:
+
+1. Go to **[Account → Settings](https://veydra.io/account/settings)** in Veydra and click **Disconnect** on the GitHub Integration card
+2. Optionally, uninstall the app from your [GitHub installation settings](https://github.com/settings/installations)
+
+<Warning>
+  Disconnecting will stop all code synchronization across all models. Your code in both Veydra and GitHub will remain intact, but future changes will no longer sync automatically. Individual models will retain their repository URLs.
+</Warning>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Changes aren't syncing from GitHub to Veydra">
+    - Verify your GitHub App installation is still active in [GitHub settings](https://github.com/settings/installations)
+    - Check that the model's linked repository matches the repo you're pushing to
+    - Ensure you're pushing to the default branch
+    - Commits tagged with `[veydra-sync]` are intentionally ignored to prevent loops
+  </Accordion>
+  <Accordion title="Changes aren't syncing from Veydra to GitHub">
+    - Confirm your connection status shows **Connected** in Account Settings
+    - Verify the linked repository has **Read & Write** content permissions
+    - Check that the target branch exists in your repository
+  </Accordion>
+  <Accordion title="'Connect GitHub first' message on model page">
+    - Go to **[Account → Settings](https://veydra.io/account/settings)** and connect your GitHub account
+    - Once connected, return to the model's settings page to create or link a repository
+  </Accordion>
+  <Accordion title="I can't find my repository in the list">
+    - The list shows repositories you own. Forked or organization repos may not appear.
+    - Try creating a new repository instead, or enter the repo URL manually.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,152 @@
+---
+title: 'Calibration Mode'
+description: 'Fine-tune your model parameters to match real-world data using manual, automated, and data-driven methods'
+---
+
+## Overview
+
+Calibration is the process of adjusting your model's parameters so that its outputs match observed real-world data or expected behavior. In Veydra, calibration happens in **Calibrate mode** — a dedicated workspace with three approaches: manual tuning, automated optimization, and data-driven fitting.
+
+<Tip>
+  Parameter changes in Calibrate mode apply to both the **baseline** and **current scenario**. This is different from Experiment mode, where changes only affect the current scenario.
+</Tip>
+
+## Calibration Panel
+
+When you switch to Calibrate mode, a dedicated Calibration Panel opens on the left side of the playground. It offers three tabs:
+
+<CardGroup cols={3}>
+  <Card title="Manual" icon="sliders">
+    Adjust parameters by hand and observe effects in real time
+  </Card>
+  <Card title="Auto" icon="cpu">
+    Automated optimization using algorithms (coming soon)
+  </Card>
+  <Card title="Data" icon="chart-line">
+    Upload observed data and calibrate against it (coming soon)
+  </Card>
+</CardGroup>
+
+---
+
+## Manual Calibration
+
+Manual calibration gives you direct control over every parameter in your model. This is the recommended starting point — it builds intuition about which parameters matter most and how they influence model behavior.
+
+### How It Works
+
+1. **Open Calibrate mode** — Click the Calibrate button in the top navigation bar
+2. **Expand a submodel section** — Parameters are grouped by submodel; click any section to expand it
+3. **Adjust a parameter** — Use the slider or type a value directly
+4. **Run the model** — See how the output changes in the chart area
+5. **Compare against baseline** — Use Compare Mode to see before/after
+
+### What You See
+
+- **Parameter sliders** organized by submodel (all sections start collapsed so you can navigate to the group you need)
+- **Charts** showing real-time simulation output as you adjust values
+- **Stock-Flow Diagram** available for reference (minimized by default)
+
+### Tips for Effective Manual Calibration
+
+<AccordionGroup>
+  <Accordion title="Start with the most influential parameters">
+    Focus on parameters that have the largest impact on model behavior. Stocks' initial values and key flow rates typically matter most.
+  </Accordion>
+  <Accordion title="Use Compare Mode">
+    Keep Compare Mode enabled to see how your current parameter values differ from the baseline. This makes it easy to spot improvements and regressions.
+  </Accordion>
+  <Accordion title="Work one submodel at a time">
+    Expand one parameter group, make adjustments, observe the effect, then move on. This avoids confusion about which change caused which effect.
+  </Accordion>
+  <Accordion title="Reset if needed">
+    Use the reset button to return parameters to their defaults. This gives you a clean starting point without losing your scenario history.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Automated Calibration (Coming Soon)
+
+<Info>
+  Automated calibration is not yet enabled. Contact sales to learn about activating this capability for your organization.
+</Info>
+
+Automated calibration uses optimization algorithms to find the best-fit parameter values. Instead of adjusting sliders by hand, you define which stocks to optimize and let the system search for optimal values.
+
+### Planned Features
+
+- **Optimization methods** — Genetic Algorithm, Gradient Descent, and Bayesian Optimization
+- **Stock selection** — Choose which model stocks to include in the optimization objective
+- **Iteration control** — Set maximum iterations and convergence criteria
+- **Progress tracking** — Monitor optimization progress in real time
+
+### Typical Workflow
+
+<Steps>
+  <Step title="Select method">
+    Choose an optimization algorithm based on your model's characteristics
+  </Step>
+  <Step title="Configure stocks">
+    Select which stocks the optimizer should focus on
+  </Step>
+  <Step title="Run optimization">
+    The system iterates through parameter combinations to minimize error
+  </Step>
+  <Step title="Review results">
+    Compare the optimized output against your target data
+  </Step>
+</Steps>
+
+<Tip>
+  Start with manual calibration to understand your model's sensitivity, then use automated tools for fine-tuning. Manual exploration will help you set reasonable bounds for the optimizer.
+</Tip>
+
+---
+
+## Data-Driven Calibration (Coming Soon)
+
+<Info>
+  Data-driven calibration is not yet enabled. Contact sales to learn about activating this capability for your organization.
+</Info>
+
+Data-driven calibration lets you upload historical or observed data and automatically fit your model's parameters to match it. This is the most rigorous approach — especially useful when you have time-series data from the real system you're modeling.
+
+### Planned Features
+
+- **CSV / Excel / JSON upload** — Bring your own time-series data
+- **Automatic column mapping** — Match data columns to model stocks
+- **Fit quality metrics** — RMSE, R², and visual overlay of model vs. data
+- **Iterative refinement** — Adjust the fit and re-run as needed
+
+---
+
+## Calibration vs. Experimentation
+
+Understanding the difference between Calibrate and Experiment modes is key to using Veydra effectively:
+
+| | Calibrate Mode | Experiment Mode |
+|---|---|---|
+| **Purpose** | Match the model to reality | Explore what-if scenarios |
+| **Parameter changes affect** | Both baseline and current scenario | Current scenario only |
+| **Baseline** | Being defined | Fixed (from calibration) |
+| **Typical question** | "What parameter values make the model match historical data?" | "What happens if we double the growth rate?" |
+
+The recommended workflow is: **Design → Calibrate → Experiment → Decide**.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Playground Overview" icon="play" href="/playground/overview">
+    Return to the full playground documentation
+  </Card>
+  <Card title="Model Controls" icon="sliders" href="/components/model-controls">
+    Learn about parameter sliders, activation, and scenario management
+  </Card>
+  <Card title="Behavior Analysis" icon="magnifying-glass-chart" href="/tools/behavior-analysis">
+    Analyze time-series patterns to validate your calibration
+  </Card>
+  <Card title="Experiment Mode" icon="chart-line" href="/playground/overview#experiment-mode">
+    After calibrating, explore scenarios in Experiment mode
+  </Card>
+</CardGroup>
