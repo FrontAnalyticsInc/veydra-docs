@@ -1,203 +1,113 @@
 ---
 title: 'Simulation Engine'
-description: 'Real-time model execution and analysis capabilities'
+description: 'Run system dynamics models in real time, directly in your browser'
 ---
 
 ## Overview
 
-Veydra's simulation engine provides powerful, real-time model execution capabilities built on modern web technologies. Run complex system dynamics models directly in your browser with instant feedback and interactive parameter adjustment.
+Veydra's simulation engine runs Python-based system dynamics models **entirely in your browser** — no installs, no servers, no setup. When you open a model, Veydra automatically loads a complete scientific Python environment and executes the model locally on your device. Every parameter change produces instant results.
 
-## Core Technology
+This engine powers every experience on the platform: the [Model Playground](/playground/overview), [Activities](/features/activities), and the [AI Assistant](/features/ai-assistant) all rely on the same real-time simulation pipeline under the hood.
 
-### Pyodide Integration
-
-Veydra uses **Pyodide** to run Python models directly in the browser:
-
-- **WebAssembly Performance**: Near-native execution speed
-- **Full Python Support**: Complete scientific Python stack
-- **Browser-Based**: No server dependencies for model execution
-- **Real-time Processing**: Instant parameter updates
-
-### Simulation Features
+## What You Can Do
 
 <CardGroup cols={2}>
-  <Card title="Real-time Execution" icon="bolt">
-    Instant model runs with parameter changes
+  <Card title="Instant Feedback" icon="bolt">
+    Move a slider and see charts update in real time — no waiting for a server round-trip.
   </Card>
-  <Card title="Multi-Stock Support" icon="chart-mixed">
-    Handle complex models with multiple stocks
+  <Card title="What-If Scenarios" icon="flask">
+    Change assumptions, compare outcomes, and explore different futures interactively.
   </Card>
-  <Card title="Scenario Comparison" icon="chart-bar">
-    Baseline vs current scenario analysis
+  <Card title="AI-Assisted Analysis" icon="sparkles">
+    The AI Assistant runs simulations on your behalf to answer questions, suggest experiments, and interpret results.
   </Card>
-  <Card title="Data Export" icon="download">
-    Export results in multiple formats
+  <Card title="Turn-Based Games" icon="gamepad">
+    Activities use the same engine to power interactive decision-making games with scoring and objectives.
   </Card>
 </CardGroup>
 
-## Execution Workflow
-
-### Model Processing
+## How It Works
 
 <Steps>
-  <Step title="Model Loading">
-    1. Load Python model code from project
-    2. Initialize Pyodide environment
-    3. Load model-specific configuration
-    4. Prepare simulation namespace
+  <Step title="Model Loads Automatically">
+    When you open a model, Veydra fetches the Python source code and boots a scientific Python runtime in your browser. No action required on your part.
   </Step>
-  <Step title="Parameter Setup">
-    1. Apply current parameter values
-    2. Configure simulation time range
-    3. Set baseline vs scenario mode
-    4. Initialize data structures
+  <Step title="Baseline Results Appear">
+    The model runs once with its default parameters and renders the baseline charts — stocks, flows, and time series.
   </Step>
-  <Step title="Execution">
-    1. Run Python model function
-    2. Capture stock and flow values
-    3. Process time series data
-    4. Generate visualization data
+  <Step title="You Adjust Parameters">
+    Use sliders, presets, or the AI Assistant to change input values. Each change triggers a new simulation run instantly.
   </Step>
-  <Step title="Visualization">
-    1. Update chart displays
-    2. Refresh stock-flow diagram
-    3. Update data tables
-    4. Enable export options
+  <Step title="Results Update in Real Time">
+    Updated charts, diagrams, and data tables reflect the new simulation output immediately.
   </Step>
 </Steps>
 
-## Parameter Management
+## Where the Engine Is Used
 
-### Active Parameters
+### Model Playground
 
-Parameters marked as "Active" enable real-time simulation updates:
+The [Model Playground](/playground/overview) is the primary interface for working with models. Depending on the mode you're in, the simulation engine behaves differently:
 
-```python
-# Example parameter configuration
-active_parameters = {
-    'growth_rate': {
-        'value': 0.05,
-        'min': 0.0,
-        'max': 0.2,
-        'step': 0.01
-    },
-    'capacity_limit': {
-        'value': 1000,
-        'min': 100,
-        'max': 5000,
-        'step': 100
-    }
-}
-```
+| Mode | How the Engine Is Used |
+|------|------------------------|
+| **Presentation** | Runs the baseline simulation for display alongside slides and guided content |
+| **Design** | Re-runs the model as you edit parameters, equations, or structure |
+| **Experiment** | Runs what-if scenarios and overlays results against the baseline |
+| **Calibrate** | Iterates simulations to fit model output to real-world data |
+| **Decide** | Runs multiple scenarios in parallel for side-by-side comparison |
 
-### Parameter Types
+### Activities
 
-<Accordion title="Numeric Parameters">
-  Support for integers, floats, and scientific notation with configurable ranges and step sizes
-</Accordion>
+[Activities](/features/activities) wrap the simulation engine in a game-like experience. At each turn, the player adjusts parameters and commits their choices. The engine advances the simulation by a configured time increment and returns the results — enabling scoring, objectives, and competitive play.
 
-<Accordion title="Boolean Parameters">
-  Toggle switches for on/off model features and conditional logic
-</Accordion>
+### AI Assistant
 
-<Accordion title="String Parameters">
-  Text inputs for model configuration and scenario naming
-</Accordion>
+The [AI Assistant](/features/ai-assistant) uses the simulation engine programmatically. When you ask "What happens if I double the growth rate?", the assistant builds a parameter set, runs the simulation, and interprets the results — all without you touching a slider.
 
-## Simulation Modes
+## Key Capabilities
 
-### Baseline Mode
+### Real-Time Parameter Adjustment
 
-Run models with default parameters to establish baseline behavior:
+Every model parameter — growth rates, initial conditions, thresholds — can be adjusted via interactive sliders. Changes take effect immediately:
 
-- **Default Values**: Uses original model parameters
-- **Reference Point**: Basis for scenario comparison
-- **Reproducible**: Consistent results for comparison
-- **Benchmarking**: Standard for model validation
+1. You move a slider
+2. The engine re-runs the simulation with the updated value
+3. Charts and diagrams refresh instantly
 
-### Scenario Mode
+### Scenario Comparison
 
-Test different parameter combinations to explore "what-if" scenarios:
+Run the model with different assumptions and compare results side by side:
 
-- **Interactive Parameters**: Real-time slider adjustments
-- **Multiple Scenarios**: Save and compare different configurations
-- **Sensitivity Analysis**: Understand parameter impact
-- **Optimization**: Find optimal parameter combinations
+- **Baseline vs. Scenario** — See how your changes differ from the defaults
+- **Multiple Scenarios** — Save named parameter sets and switch between them
+- **Presets** — Models ship with curated scenarios that highlight interesting dynamics
 
-### Comparison Mode
+### Data Export
 
-Side-by-side analysis of baseline vs scenario results:
+Simulation results can be exported for further analysis:
 
-<CardGroup cols={2}>
-  <Card title="Visual Comparison" icon="chart-line">
-    Overlay baseline and scenario charts
-  </Card>
-  <Card title="Difference Analysis" icon="calculator">
-    Calculate and display differences
-  </Card>
-  <Card title="Percentage Changes" icon="percent">
-    Show relative changes from baseline
-  </Card>
-  <Card title="Statistical Summary" icon="chart-bar">
-    Key metrics and summary statistics
-  </Card>
-</CardGroup>
+- **CSV** — Time series data for stocks and flows
+- **Charts** — Download visualizations as images
 
-## Data Processing
+## Performance
 
-### Time Series Handling
+- **No server required** — all computation happens on your device
+- **Near-native speed** — the Python runtime is compiled to WebAssembly for fast numerical execution
+- **Smart caching** — model files and recent results are cached locally for fast reloads
+- **Handles complexity** — multi-stock models with dozens of parameters run smoothly in the browser
 
-Veydra automatically processes simulation results into time series data:
+<Note>
+  The first time you open a model, there's a brief loading period while the runtime initializes. Subsequent visits are faster thanks to browser caching.
+</Note>
 
-- **Automatic Indexing**: Time-based data organization
-- **Interpolation**: Smooth data visualization
-- **Aggregation**: Multiple time scale support
-- **Filtering**: Data cleaning and validation
+## Privacy
 
-### Output Configuration
+Because models execute entirely in your browser:
 
-Model outputs are configured via `outputs.json` files:
-
-```json
-{
-  "stocks": [
-    {
-      "name": "population",
-      "display_name": "Population",
-      "units": "individuals",
-      "color": "#2E8B57"
-    }
-  ],
-  "flows": [
-    {
-      "name": "birth_rate", 
-      "display_name": "Birth Rate",
-      "units": "births/year",
-      "color": "#4169E1"
-    }
-  ]
-}
-```
-
-## Performance Optimization
-
-### Caching Strategy
-
-- **Model Caching**: Store compiled models for faster execution
-- **Parameter Caching**: Remember recent parameter sets
-- **Result Caching**: Cache simulation outputs
-- **File Caching**: Local storage for model files
-
-### Memory Management
-
-- **Efficient Data Structures**: Optimized for large datasets
-- **Garbage Collection**: Automatic memory cleanup
-- **Incremental Updates**: Only process changed data
-- **Resource Monitoring**: Track memory usage
-
-<Warning>
-  Large models with many parameters may require longer initial load times but will run smoothly once cached
-</Warning>
+- **Simulation inputs and results stay on your device** — nothing is sent to a server during execution
+- **No server compute costs** — your device does the work
+- **Isolated execution** — each model runs in its own sandboxed environment
 
 ## Error Handling
 

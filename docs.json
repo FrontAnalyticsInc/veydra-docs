@@ -20,6 +20,7 @@
           {
             "group": "Platform Features",
             "pages": [
+              "features/simulation",
               "features/projects",
               "features/models",
               "features/library",
@@ -40,7 +41,6 @@
           {
             "group": "Simulation Components",
             "pages": [
-              "features/simulation",
               "components/model-controls",
               "components/charts",
               "components/stock-flow-diagrams"
