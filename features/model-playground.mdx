@@ -169,9 +169,10 @@ The Model Controls panel is your command center for model interaction:
 The diagram area provides an interactive view of your model's structure:
 
 - **Stock Elements**: Rectangular boxes representing accumulations
-- **Flow Elements**: Arrows showing rates of change
-- **Connectors**: Links showing influence relationships
-- **Parameters**: Variable elements that can be adjusted
+- **Flow Elements**: Blue circular flow nodes with a bowtie valve marker and stem for quick rate identification
+- **Physical Connections**: Blue pipe-style links with directional arrowheads for transfers
+- **Causal Connectors**: Gray dashed links for influence relationships
+- **Parameter-Like Elements**: Smaller green circular nodes for parameter, auxiliary, constant, converter, and variable terms
 
 ### Interactive Features
 
@@ -181,7 +182,7 @@ The diagram area provides an interactive view of your model's structure:
 - **Element Properties**: Click to edit element details
 
 <Note>
-  The diagram automatically updates to reflect changes made in the code editor
+  The diagram and the code may have a slight delay before updates reflect changes made
 </Note>
 
 ## Chart Area
