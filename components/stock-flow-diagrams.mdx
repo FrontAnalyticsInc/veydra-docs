@@ -46,6 +46,17 @@ Links that show influence relationships between elements:
 
 ## Visual Elements
 
+### Node Representation
+
+The diagram uses distinct visual notation for major element types:
+
+- **Flow Nodes**: Blue circular nodes with a valve marker (bowtie symbol and stem) above the node
+- **Parameter-Like Nodes**: Smaller green circles (parameter, auxiliary, constant, converter, variable)
+- **Cloud Source/Sink Nodes**: Compact cloud nodes with context-aware labels (source labels above, sink labels below)
+- **Labels**: Readable labels are positioned consistently per node type to reduce overlap
+
+Each node still supports clear naming, values, units, and metadata in the editor.
+
 ### Stock Representation
 
 Stocks are displayed as rectangular boxes with:
@@ -62,29 +73,28 @@ Stocks are displayed as rectangular boxes with:
 - **Units**: Measurement units (people, dollars, etc.)
 - **Color Coding**: Visual indication of status or category
 
+
 ### Flow Representation
 
-Flows are shown as arrows with:
+Physical flow connections are rendered as pipe-style links with:
 
 ```
-    Birth Rate
-  ────────────►
-   +50 /year
+Source ====> Sink
 ```
 
-- **Direction**: Arrow indicates flow direction
-- **Rate Value**: Current flow rate during simulation
-- **Rate Name**: Descriptive name for the flow
-- **Units**: Rate units (per day, per year, etc.)
+- **Pipe Styling**: Double-line visual treatment for physical transfers
+- **Direction**: Fixed-size arrowheads indicate transfer direction
+- **Valve Notation**: Flow nodes use the bowtie valve marker to distinguish rates from accumulations
+- **Rate Context**: Flow names and values remain visible in labels/tooltips during simulation
 
 ### Connector Types
 
 <Accordion title="Information Links">
-  Thin arrows showing what information influences a flow rate (e.g., population size affecting birth rate)
+  Dashed gray connectors showing informational influence on rates and decisions (for example, population affecting birth rate)
 </Accordion>
 
 <Accordion title="Material Flows">
-  Thick arrows representing actual movement of materials, people, or resources
+  Blue pipe-style links representing movement of materials, people, resources, or quantities
 </Accordion>
 
 <Accordion title="Feedback Loops">
@@ -141,7 +151,7 @@ Basic accumulation with inflow and outflow:
            Inflow    Outflow
 ```
 
-Example: Water tank with input and output valves
+Example: Water tank with input and output flows shown using bowtie valve markers
 
 ### Aging Chain
 
