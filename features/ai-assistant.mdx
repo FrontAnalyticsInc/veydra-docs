@@ -20,6 +20,20 @@ The assistant automatically adjusts based on where you are in the platform:
 | **Decide** | Compares scenario trade-offs, highlights key differences |
 | **Activity** | Provides hints about the objective, suggests strategies |
 
+When you switch modes, the assistant uses the new mode on your very next message, even if you stay in the same chat session.
+
+### Experiment Mode Context
+
+In **Experiment** mode, the assistant receives a richer state snapshot so it can reason about the exact run you are looking at:
+
+- Active parameter IDs and their current overridden values
+- Number of modified parameters
+- Compare mode status and visible chart context
+- Latest run summary (for example baseline/scenario final values and series lengths)
+- Current UI state metadata (mode + whether output is available)
+
+This is why experiment responses can reference your current slider changes and chart comparison state more precisely.
+
 ## Quick Actions
 
 Each mode surfaces relevant quick-action prompts:
@@ -61,3 +75,5 @@ Below the input field, a small status bar shows the current **mode**, **AI model
 - **Mode** — Click to see all available modes and switch between them.
 - **AI Model** — Click to choose which LLM powers the assistant (e.g. Gemini Flash Latest, Gemini 2.5 Flash, Gemini 3 Flash Preview).
 - **Context** — Click to inspect exactly what is sent to the AI: the system prompt, files, chat history, selected elements, and parameter state.
+
+In Experiment mode, the Context view also shows the active parameter overrides and UI snapshot used for that message.
