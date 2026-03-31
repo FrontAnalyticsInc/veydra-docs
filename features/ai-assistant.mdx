@@ -34,6 +34,18 @@ In **Experiment** mode, the assistant receives a richer state snapshot so it can
 
 This is why experiment responses can reference your current slider changes and chart comparison state more precisely.
 
+### Fast Responses for Simple Prompts
+
+For short, lightweight requests, the assistant uses a direct-response path instead of running the full orchestration flow.
+
+- If your request is clear, it gives a concise answer immediately.
+- If your request is ambiguous, it asks one focused clarifying question.
+
+Examples:
+- "Can you help?"
+- "Thanks"
+- "What can you do in this mode?"
+
 ## Quick Actions
 
 Each mode surfaces relevant quick-action prompts:
