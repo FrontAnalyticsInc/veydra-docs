@@ -44,6 +44,30 @@ Links that show influence relationships between elements:
 - **Causal Relationships**: Indicate cause-and-effect connections
 - **Feedback Loops**: Circular relationships that create system behavior
 
+### Variable Categories in Veydra
+
+Veydra uses two layers of variable typing: core simulation categories and optional role labels.
+
+Core simulation categories (used by the solver):
+
+| Category | What it means |
+| --- | --- |
+| Stock | A state that accumulates over time and is updated by integration |
+| Flow | A rate that increases or decreases one or more stocks |
+| Parameter | An exogenous or configured value used by equations |
+| Auxiliary | A derived value used to compute other variables |
+
+Role labels (used for authoring and visualization):
+
+| Role label | Typical interpretation |
+| --- | --- |
+| Constant | A parameter that does not vary during a run |
+| Converter | A parameter or auxiliary computed from a lookup/table or transformation |
+| Supplementary | A post-rate auxiliary often calculated after core stock/flow updates |
+| Internal | A helper auxiliary used for implementation details, usually hidden in default diagrams |
+
+In practice, the diagram engine still reasons in terms of stock, flow, parameter, and auxiliary. Role labels add context for humans and UI behavior.
+
 ## Visual Elements
 
 ### Node Representation
@@ -51,7 +75,7 @@ Links that show influence relationships between elements:
 The diagram uses distinct visual notation for major element types:
 
 - **Flow Nodes**: Blue circular nodes with a valve marker (bowtie symbol and stem) above the node
-- **Parameter-Like Nodes**: Smaller green circles (parameter, auxiliary, constant, converter, variable)
+- **Parameter-Like Nodes**: Smaller green circles for parameter, constant, converter, and variable values, with orange circles for auxiliary/supplementary values
 - **Cloud Source/Sink Nodes**: Compact cloud nodes with context-aware labels (source labels above, sink labels below)
 - **Labels**: Readable labels are positioned consistently per node type to reduce overlap
 
