@@ -3,83 +3,77 @@ title: "Quickstart Guide"
 description: "Get started with Veydra in minutes"
 ---
 
-## Welcome to Veydra!
+## Create a New Model in Minutes
 
-This guide will help you get started with Veydra's system dynamics modeling platform. In just a few steps, you'll be creating and running your first model.
+This quickstart follows the current in-app flow at https://docs.veydra.io and shows how to create a model from the New Model page.
 
-### Step 1: Access the Platform
+## Step 1: Open the New Model Page
 
-Navigate to your Veydra dashboard and sign in to your account.
+Use either path:
+
+- Click the plus button in the top navigation.
+- Go directly to https://docs.veydra.io/quickstart for this guide and then open `/model/new` in the app.
 
 <Note>
-  If you don't have an account yet, contact your administrator or sign up for access.
+  If you are not signed in, the app will prompt you to create an account before model generation begins.
 </Note>
 
-### Step 2: Create Your First Project
+## Step 2: Start from a Template or a Prompt
 
-<AccordionGroup>
-  <Accordion icon="plus" title="Create New Project">
-    Click "Create New Project" from your dashboard and give your project a descriptive name like "My First Model".
-  </Accordion>
-  <Accordion icon="gear" title="Choose Model Type">
-    Select the type of model you want to create:
-    - **Basic Model**: Simple stock-and-flow structure
-    - **Advanced Model**: Complex multi-stock systems  
-    - **Template**: Start from a pre-built model
-  </Accordion>
-</AccordionGroup>
+On `/model/new`, you can:
 
-### Step 3: Enter the Model Playground
+- Select a starter tile for common system patterns.
+- Enter your own system description in the text box.
 
-<AccordionGroup>
-  <Accordion icon="play" title="Launch Model Playground">
-    Once your project is created, you'll enter the **Model Playground** - the heart of Veydra where you build and test your models.
-  </Accordion>
-  <Accordion icon="sliders" title="Adjust Parameters">
-    Use the **Model Controls** panel to:
-    1. Set initial parameter values
-    2. Mark parameters as "Active" for real-time adjustment
-    3. Configure simulation settings
-    
-    <Tip>Parameters marked as "Active" can be adjusted while running simulations.</Tip>
-  </Accordion>
-</AccordionGroup>
+Use clear language about the system boundary, key variables, and the behavior you want to test.
 
-### Step 4: Run Your First Simulation
+## Step 3: Add Optional Supplemental Files
 
-<Accordion icon="rocket" title="Execute and Analyze">
-  1. Click the "Run" button to execute your model
-  2. Watch results appear in real-time in the chart area
-  3. Adjust parameters and run again to compare scenarios
-  4. Toggle "Compare Mode" to see baseline vs current scenario
-  
-  <Tip>Use the refresh button in Model Controls to reset all parameters to defaults while keeping them active.</Tip>
-</Accordion>
+In the dotted upload area you can drag-and-drop or browse files to improve generation quality.
 
-## Next steps
+Common attachments:
 
-Now that you have your first model running, explore these advanced features:
+- XMILE model files
+- PDFs with assumptions or equations
+- CSV/XLSX datasets
+
+## Step 4: Generate the Model
+
+Click submit to start model creation. Veydra will:
+
+- Create a new model (and project when needed)
+- Upload your supplemental files
+- Open the auto-generate flow
+
+## Step 5: Review and Refine
+
+After generation, continue in these pages:
+
+- Model settings page (`/model/:id/edit`) to refine metadata, repository settings, files, and activities
+- Playground (`/model/:id/:mode`) to run simulations and test behavior
+
+## Next Steps
 
 <CardGroup cols={2}>
 
-<Card title="Advanced Features" icon="gear" href="/features/simulation">
-  Explore complex simulation scenarios and parameter studies.
+<Card title="Models Guide" icon="cpu" href="/features/models">
+  Learn model settings, structure, and lifecycle workflows.
 </Card>
 
-<Card title="Project Management" icon="folder" href="/features/projects">
-  Learn to organize and share your modeling projects.
+<Card title="Projects Guide" icon="folder" href="/features/projects">
+  Organize models and team access across projects.
 </Card>
 
-<Card title="Visual Components" icon="chart-line" href="/components/charts">
-  Master the charting and visualization tools.
+<Card title="Model Playground" icon="play" href="/playground/overview">
+  Run scenarios and analyze model behavior.
 </Card>
 
-<Card title="Collaboration" icon="users" href="/features/collaboration">
-  Work with your team on shared modeling projects.
+<Card title="Activities" icon="controller" href="/features/activities">
+  Build guided and game-like model experiences.
 </Card>
 
 </CardGroup>
 
 <Note>
-  **Need help?** Contact support at support@veydra.io or check out our detailed feature documentation.
+  Need help? Use the in-app support panel or visit https://docs.veydra.io for full documentation.
 </Note>
