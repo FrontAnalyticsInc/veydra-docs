@@ -1,14 +1,14 @@
 ---
 title: "MCP Integration Guide"
-description: "Two simple ways to connect Veydra MCP"
+description: "Use the hosted MCP URL with OAuth or API key"
 ---
 
 # Veydra MCP: Quick Setup
 
-Choose one option. Most teams should start with Option A.
+Use the hosted MCP URL. Most users should start with OAuth.
 
 <Info>
-Get your API key at [app.veydra.io/account/api-keys](https://app.veydra.io/account/api-keys).
+If your client supports remote MCP URLs, use Option A or Option B.
 </Info>
 
 ## Option A: Hosted URL (fastest)
@@ -21,11 +21,37 @@ Use this when your client supports remote MCP URLs directly.
 https://api.veydra.io/mcp
 ```
 
-If your client asks for auth, use:
+Authentication: OAuth
+
+### Generic JSON example
+
+```json
+{
+  "mcpServers": {
+    "veydra": {
+      "url": "https://api.veydra.io/mcp"
+    }
+  }
+}
+```
+
+## Option B: Hosted URL + API key
+
+Use this when your client does not support OAuth, or when your team prefers API key auth.
+
+**MCP URL**
+
+```text
+https://api.veydra.io/mcp
+```
+
+**Authorization header**
 
 ```text
 Authorization: Bearer YOUR_VEYDRA_API_KEY
 ```
+
+Get your API key at [app.veydra.io/account/api-keys](https://app.veydra.io/account/api-keys).
 
 ### Generic JSON example
 
@@ -42,50 +68,21 @@ Authorization: Bearer YOUR_VEYDRA_API_KEY
 }
 ```
 
-## Option B: npm CLI (best for Claude Code / Gemini CLI)
+## Alternative Options
 
-Use this when your client expects a local command-based MCP server.
+Need npm CLI, API key mode, local proxy setup, or a custom enterprise flow?
 
-### 1) Install
+Contact support and we will provide the best configuration for your client and environment.
 
-```bash
-npm install -g @veydra-io/mcp-server
-```
-
-### 2) Login once with OAuth
-
-```bash
-veydra-mcp login
-```
-
-This opens a Veydra auth page in your browser and stores your CLI session.
-
-### 3) Configure your client
-
-```json
-{
-  "mcpServers": {
-    "veydra": {
-      "command": "npx",
-      "args": ["@veydra-io/mcp-server"]
-    }
-  }
-}
-```
-
-### 4) Optional CLI commands
-
-```bash
-veydra-mcp whoami
-veydra-mcp logout
-```
+- Email: [support@veydra.io](mailto:support@veydra.io)
 
 ## Quick Troubleshooting
 
 1. Confirm URL is exactly `https://api.veydra.io/mcp`.
-2. If using API keys, confirm key starts with `vk_`.
-3. If using npm OAuth, run `veydra-mcp login` again.
+2. If using OAuth, confirm your client is configured for OAuth.
+3. If using API key, confirm the key starts with `vk_`.
 4. Restart your AI client after config changes.
+5. If auth still fails, contact [support@veydra.io](mailto:support@veydra.io).
 
 ## Need Help?
 
